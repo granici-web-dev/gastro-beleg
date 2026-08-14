@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>GastroBeleg · Belegdiagnose</title>
+<style>
+  @page { size: A4; margin: 14mm; }
+  :root{
+    --forest:#10311F; --green:#26703F; --lime:#B7D967; --sage:#ECEEEA;
+    --ink:#14261B; --mut:#55625A; --mut2:#7C8A7F; --line:#D8DED6;
+  }
+  *{box-sizing:border-box}
+  body{
+    font-family:Inter,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    color:var(--ink); margin:0; padding:24px; background:#fff;
+    font-size:11pt; line-height:1.45;
+  }
+  .sheet{max-width:190mm;margin:0 auto}
+  header{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid var(--forest);padding-bottom:10px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo{width:34px;height:34px;border-radius:9px;background:var(--lime);color:var(--ink);
+        font-weight:800;display:flex;align-items:center;justify-content:center;font-size:18px}
+  .brand b{font-size:17pt;letter-spacing:-.2px}
+  .meta{text-align:right;font-size:9pt;color:var(--mut)}
+  h1{font-size:20pt;margin:18px 0 2px;letter-spacing:-.3px}
+  .sub{color:var(--mut);margin:0 0 16px}
+  .headline{background:var(--forest);color:#EAF1E6;border-radius:12px;padding:16px 20px;display:flex;
+            justify-content:space-between;align-items:center;margin-bottom:18px}
+  .headline .big{font-size:30pt;font-weight:800;color:var(--lime);line-height:1}
+  .headline .cap{font-size:9.5pt;letter-spacing:.12em;text-transform:uppercase;color:#A8BCAB}
+  h2{font-size:12.5pt;margin:18px 0 6px;display:flex;align-items:baseline;gap:8px}
+  h2 .amt{margin-left:auto;color:var(--green);font-weight:800}
+  table{width:100%;border-collapse:collapse;font-size:9.5pt}
+  th{text-align:left;font-size:8pt;letter-spacing:.08em;text-transform:uppercase;color:var(--mut2);
+     border-bottom:1px solid var(--line);padding:5px 6px}
+  td{padding:6px;border-bottom:1px solid var(--line);vertical-align:top}
+  td.num,th.num{text-align:right;white-space:nowrap}
+  .up{color:#B4472F;font-weight:700}
+  .beleg{color:var(--mut2);font-size:8.5pt}
+  .foot{margin-top:20px;border-top:1px solid var(--line);padding-top:10px;font-size:8.5pt;color:var(--mut)}
+  .cta{margin-top:16px;background:var(--sage);border-left:5px solid var(--lime);border-radius:10px;padding:14px 18px}
+  .cta b{font-size:12pt}
+  .stamp{display:inline-block;background:#FFE299;color:#5A4A00;border-radius:6px;
+         padding:2px 8px;font-size:8pt;font-weight:700;letter-spacing:.06em}
+  @media print{ body{padding:0} .noprint{display:none} }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <header>
+    <div class="brand"><div class="logo">G</div><b>GastroBeleg</b></div>
+    <div class="meta">
+      Belegdiagnose · kostenlos, unverbindlich<br>
+      erstellt am 11.08.2026 · Seite 1 von 1
+    </div>
+  </header>
+
+  <h1>Was Ihr Einkauf Sie zusätzlich gekostet hat</h1>
+  <p class="sub">
+    Trattoria Bella · Musterstraße 1, 40210 Düsseldorf<br>
+    Grundlage: <b>68 Belege</b> von <b>6 Lieferanten</b>, Zeitraum 01.03.–31.05.2026, Wareneinsatz gesamt 23 480,50 €
+    &nbsp;<span class="stamp noprint">BEISPIELDATEN — Vorlage für den Concierge-Test</span>
+  </p>
+
+  <div class="headline">
+    <div>
+      <div class="cap">Gefunden in drei Monaten</div>
+      <div class="big">312,20 €</div>
+    </div>
+    <div style="text-align:right">
+      <div class="cap">Das sind pro Monat</div>
+      <div style="font-size:17pt;font-weight:700">104,07 €</div>
+    </div>
+  </div>
+
+  <h2>1 · Stille Preiserhöhungen <span class="amt">187,20 €</span></h2>
+  <table>
+    <tr><th>Artikel</th><th>Lieferant</th><th class="num">vorher</th><th class="num">jetzt</th><th>seit</th><th class="num">Ihre Menge</th><th class="num">Mehrkosten / Monat</th></tr>
+    <tr>
+      <td>Lachsfilet, 1 kg<div class="beleg">RE-4471 · RE-4610</div></td><td>METRO</td>
+      <td class="num">21,90 €</td><td class="num">24,50 € <span class="up">+11,9 %</span></td><td>02.04.</td>
+      <td class="num">18 kg</td><td class="num">46,80 €</td>
+    </tr>
+    <tr>
+      <td>Sahne 30 %, 5 l<div class="beleg">LS-2291 · LS-2404</div></td><td>Molkerei Süd</td>
+      <td class="num">8,20 €</td><td class="num">9,20 € <span class="up">+12,2 %</span></td><td>14.05.</td>
+      <td class="num">34 Stück</td><td class="num">34,00 €</td>
+    </tr>
+    <tr>
+      <td>Rindergulasch, 1 kg<div class="beleg">RE-1180</div></td><td>Metzgerei Wolf</td>
+      <td class="num">11,40 €</td><td class="num">12,00 € <span class="up">+5,3 %</span></td><td>20.04.</td>
+      <td class="num">25 kg</td><td class="num">15,00 €</td>
+    </tr>
+    <tr>
+      <td>Butter, 250 g<div class="beleg">LS-2377</div></td><td>Molkerei Süd</td>
+      <td class="num">2,19 €</td><td class="num">2,39 € <span class="up">+9,1 %</span></td><td>28.04.</td>
+      <td class="num">120 Stück</td><td class="num">24,00 €</td>
+    </tr>
+  </table>
+
+  <h2>2 · Fehlmengen und Rechenfehler <span class="amt">89,00 €</span></h2>
+  <table>
+    <tr><th>Datum</th><th>Vorgang</th><th>Lieferschein</th><th>Rechnung</th><th class="num">Differenz</th></tr>
+    <tr><td>12.04.</td><td>Lachsfilet<div class="beleg">LS-2310 gegen RE-4520</div></td><td>9 kg geliefert</td><td>10 kg berechnet</td><td class="num">21,90 €</td></tr>
+    <tr><td>03.05.</td><td>Gemüsekiste<div class="beleg">RE-0912, Zeile 4</div></td><td>3 × 12,60 € = 37,80 €</td><td>39,80 € berechnet</td><td class="num">2,00 €</td></tr>
+    <tr><td>19.05.</td><td>Getränke<div class="beleg">LS-7742 gegen RE-7801</div></td><td>18 Kästen</td><td>20 Kästen berechnet</td><td class="num">37,60 €</td></tr>
+    <tr><td>27.05.</td><td>Käse<div class="beleg">RE-1204</div></td><td>—</td><td>doppelt berechnet</td><td class="num">27,50 €</td></tr>
+  </table>
+
+  <h2>3 · Pfand, das nicht zurückgeholt wurde <span class="amt">36,00 €</span></h2>
+  <table>
+    <tr><th>Lieferant</th><th class="num">ausgeliefert</th><th class="num">zurückgegeben</th><th class="num">offen</th><th class="num">Guthaben</th></tr>
+    <tr><td>Getränke Kraft</td><td class="num">24 Kästen</td><td class="num">18 Kästen</td><td class="num">6 Kästen</td><td class="num">36,00 €</td></tr>
+  </table>
+
+  <div class="cta">
+    <b>Hochgerechnet aufs Jahr: rund 1 250 €.</b><br>
+    GastroBeleg kostet 39 € im Monat — 468 € im Jahr, monatlich kündbar.
+    Ab dem ersten gefundenen Preissprung rechnet es sich.
+  </div>
+
+  <div class="foot">
+    Grundlage sind ausschließlich Ihre eigenen Belege; jede Zeile trägt die Belegnummer und ist nachprüfbar.
+    Keine Schätzungen, keine Branchendurchschnitte. „Ihre Menge" ist die tatsächlich bezogene Menge im
+    letzten vollen Monat. Ihre Unterlagen wurden nach der Auswertung zurückgegeben; die Daten werden in
+    Deutschland verarbeitet, nicht weitergegeben und nach 30 Tagen gelöscht, falls kein Vertrag zustande kommt.
+  </div>
+
+</div>
+</body>
+</html>

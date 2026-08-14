@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Synthetic XRechnung 3.0 (UBL syntax) from a drinks wholesaler.
+  Exercises the three things a German beverage invoice always has:
+  19% on the drinks, a Pfand line that is not goods cost, and a
+  BaseQuantity price (per 100 pieces) that must be divided before use.
+  Values are invented; the structure follows EN 16931 / XRechnung CIUS.
+-->
+<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:xoev-de:kosit:standard:xrechnung_3.0</cbc:CustomizationID>
+  <cbc:ID>GT-2026-04417</cbc:ID>
+  <cbc:IssueDate>2026-08-04</cbc:IssueDate>
+  <cbc:InvoiceTypeCode>380</cbc:InvoiceTypeCode>
+  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cac:PostalAddress>
+        <cbc:StreetName>Industriestraße 14</cbc:StreetName>
+        <cbc:PostalZone>40699</cbc:PostalZone>
+        <cbc:CityName>Erkrath</cbc:CityName>
+        <cac:Country><cbc:IdentificationCode>DE</cbc:IdentificationCode></cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme>
+        <cbc:CompanyID>DE811907980</cbc:CompanyID>
+        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+      </cac:PartyTaxScheme>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>Rheinland Getränkehandel GmbH</cbc:RegistrationName>
+      </cac:PartyLegalEntity>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyLegalEntity>
+        <cbc:RegistrationName>Trattoria da Marco</cbc:RegistrationName>
+      </cac:PartyLegalEntity>
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="EUR">36.86</cbc:TaxAmount>
+  </cac:TaxTotal>
+
+  <cac:LegalMonetaryTotal>
+    <cbc:TaxExclusiveAmount currencyID="EUR">194.00</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="EUR">230.86</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="EUR">230.86</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+
+  <cac:InvoiceLine>
+    <cbc:ID>1</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="H87">24</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">115.20</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Name>Mineralwasser Classic 0,75 l</cbc:Name>
+      <cac:SellersItemIdentification><cbc:ID>MW-075-C</cbc:ID></cac:SellersItemIdentification>
+      <cac:StandardItemIdentification><cbc:ID>4001234567890</cbc:ID></cac:StandardItemIdentification>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price><cbc:PriceAmount currencyID="EUR">4.80</cbc:PriceAmount></cac:Price>
+  </cac:InvoiceLine>
+
+  <cac:InvoiceLine>
+    <cbc:ID>2</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="H87">1000</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">38.00</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Name>Serviette 2-lagig weiß</cbc:Name>
+      <cac:SellersItemIdentification><cbc:ID>SRV-2W</cbc:ID></cac:SellersItemIdentification>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <!-- 3,80 € per 100 pieces. Read as a per-unit price this line is 3 800 €. -->
+    <cac:Price>
+      <cbc:PriceAmount currencyID="EUR">3.80</cbc:PriceAmount>
+      <cbc:BaseQuantity unitCode="H87">100</cbc:BaseQuantity>
+    </cac:Price>
+  </cac:InvoiceLine>
+
+  <cac:InvoiceLine>
+    <cbc:ID>3</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="H87">4</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">40.80</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Name>Pfand Mehrwegkasten 24er</cbc:Name>
+      <cac:SellersItemIdentification><cbc:ID>PF-K24</cbc:ID></cac:SellersItemIdentification>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>S</cbc:ID>
+        <cbc:Percent>19</cbc:Percent>
+        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price><cbc:PriceAmount currencyID="EUR">10.20</cbc:PriceAmount></cac:Price>
+  </cac:InvoiceLine>
+</Invoice>

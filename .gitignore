@@ -1,0 +1,28 @@
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+node_modules/
+.next/
+.env
+.env.*
+!.env.example
+
+# IDE
+.idea/
+.vscode/
+
+# Scratch output from browser automation and design passes
+.playwright-mcp/
+/m_hdr.png
+/uebersicht-desktop.png
+
+# macOS
+.DS_Store
+
+# Vendored skills — installed tooling, tracked by skills-lock.json
+.claude/skills/
+.claude/settings.local.json
+.agents/skills/

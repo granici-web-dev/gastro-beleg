@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GastroBeleg — Style Probe: Forest & Lime</title>
+<style>
+  /* Palette extracted from the Pinterest reference (Siohioma dashboard) */
+  :root{
+    --forest:#10311F;        /* dark green sidebar / dark cards  */
+    --forest-2:#0B2416;      /* deeper */
+    --lime:#B7D967;          /* signature accent */
+    --lime-dim:#9FC64E;
+    --green:#2C7A46;         /* primary action (white text) */
+    --green-hover:#24683B;
+    --sage-tint:#E7EFD6;     /* pale green surface */
+    --muted:#6F7F73;         /* muted sage text */
+    --page:#ECEEEA;          /* light gray-sage page bg */
+    --card:#FFFFFF;
+    --ink:#14261B;           /* near-black green-tinted text */
+    --ink-2:#5C6B60;         /* secondary text */
+    --line:#E4E7E1;          /* borders */
+    --amber:#8A3F08; --amber-bg:#FBEBD6;
+    --red:#B01818;  --red-bg:#FBE4E4;
+    --radius:16px;
+    --shadow:0 6px 20px rgba(16,49,31,.06), 0 2px 6px rgba(16,49,31,.04);
+    font-family:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--page);color:var(--ink);font-size:14px;-webkit-font-smoothing:antialiased}
+  .tnum{font-variant-numeric:tabular-nums lining-nums}
+  .app{display:grid;grid-template-columns:236px 1fr;min-height:100vh}
+
+  /* ---- Sidebar ---- */
+  .side{background:var(--forest);color:#DDE7D8;padding:22px 16px;display:flex;flex-direction:column;gap:6px}
+  .brand{display:flex;align-items:center;gap:10px;color:#fff;font-weight:700;font-size:17px;margin:4px 6px 22px}
+  .logo{width:28px;height:28px;border-radius:8px;background:var(--lime);display:grid;place-items:center;color:var(--forest);font-weight:800}
+  .side .cap{color:#7C9080;font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin:16px 8px 6px}
+  .nav{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:11px;color:#C4D3BE;font-weight:500;cursor:pointer}
+  .nav svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+  .nav:hover{background:rgba(255,255,255,.05);color:#EAF1E6}
+  .nav.active{background:var(--lime);color:var(--forest);font-weight:600}
+  .side .spacer{flex:1}
+  .me{display:flex;align-items:center;gap:10px;padding:10px;border-radius:12px;background:rgba(255,255,255,.05)}
+  .me .av{width:32px;height:32px;border-radius:50%;background:var(--lime);color:var(--forest);display:grid;place-items:center;font-weight:700}
+  .me small{color:#9DB097;display:block;font-size:11px}
+
+  /* ---- Main ---- */
+  .main{padding:22px 26px}
+  .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+  .top h1{font-size:22px;letter-spacing:-.02em}
+  .top .sub{color:var(--ink-2);font-size:13px;margin-top:2px}
+  .tools{display:flex;gap:10px;align-items:center}
+  .search{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 14px;color:var(--muted);font-size:13px;min-width:200px}
+  .btn{border:0;border-radius:10px;padding:0 16px;height:40px;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit}
+  .btn-primary{background:var(--green);color:#fff}
+  .btn-primary:hover{background:var(--green-hover)}
+  .pill-btn{background:var(--card);border:1px solid var(--line);color:var(--ink);border-radius:10px;height:40px;padding:0 14px;font-weight:500;display:flex;align-items:center;gap:8px}
+
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:16px}
+  .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+  .kpi .lbl{color:var(--ink-2);font-size:13px;margin-bottom:8px}
+  .kpi .val{font-size:30px;font-weight:700;letter-spacing:-.02em}
+  .kpi .chg{font-size:12px;margin-top:6px;font-weight:600}
+  .up{color:var(--red)} .down{color:var(--green)}
+
+  .alert{background:var(--forest);color:#EAF1E6;border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);grid-column:auto}
+  .alert .tag{display:inline-flex;gap:6px;align-items:center;background:rgba(183,217,103,.18);color:var(--lime);font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;margin-bottom:12px}
+  .alert h3{font-size:19px;line-height:1.25;margin-bottom:6px}
+  .alert h3 b{color:var(--lime)}
+  .alert p{color:#A9BCA2;font-size:12.5px;margin-bottom:14px}
+  .alert a{color:var(--forest);background:var(--lime);text-decoration:none;font-weight:600;font-size:13px;padding:8px 14px;border-radius:9px;display:inline-block}
+
+  .card h2{font-size:15px;margin-bottom:2px}
+  .card .hint{color:var(--ink-2);font-size:12px;margin-bottom:16px}
+  .legend{display:flex;gap:14px;font-size:12px;color:var(--ink-2);margin-bottom:14px}
+  .legend i{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:middle}
+
+  /* bar chart */
+  .bars{display:flex;align-items:flex-end;gap:14px;height:150px;padding-top:6px}
+  .bcol{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .bstack{width:60%;display:flex;flex-direction:column;justify-content:flex-end;height:130px;gap:3px}
+  .bstack span{display:block;border-radius:5px 5px 0 0}
+  .bcol small{color:var(--muted);font-size:11px}
+
+  /* donut */
+  .donut-wrap{display:flex;flex-direction:column;align-items:center;gap:14px}
+  .donut{width:150px;height:150px;border-radius:50%;
+    background:conic-gradient(var(--green) 0 46%, var(--lime) 46% 72%, var(--sage-tint) 72% 88%, #cdd8c4 88% 100%);
+    display:grid;place-items:center;position:relative}
+  .donut::after{content:"";position:absolute;width:96px;height:96px;border-radius:50%;background:var(--card)}
+  .donut .c{position:relative;z-index:1;text-align:center}
+  .donut .c b{font-size:22px;display:block;letter-spacing:-.02em}
+  .donut .c small{color:var(--ink-2);font-size:11px}
+  .cats{width:100%;display:flex;flex-direction:column;gap:8px;font-size:12.5px}
+  .cats .r{display:flex;align-items:center;justify-content:space-between}
+  .cats .r span:first-child{display:flex;align-items:center;gap:8px}
+
+  /* list */
+  .lrow{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--line)}
+  .lrow:last-child{border-bottom:0}
+  .lrow .l{display:flex;align-items:center;gap:11px}
+  .ic{width:34px;height:34px;border-radius:9px;background:var(--sage-tint);display:grid;place-items:center;font-size:15px}
+  .lrow small{color:var(--muted);font-size:11px;display:block}
+  .tag2{font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px}
+  .t-ok{background:var(--sage-tint);color:var(--green)}
+  .t-warn{background:var(--amber-bg);color:var(--amber)}
+  .t-pf{background:#E1EFFA;color:#0A5C9E}
+  .note{grid-column:1/-1;text-align:center;color:var(--muted);font-size:11.5px;margin-top:18px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="side">
+    <div class="brand"><span class="logo">G</span>GastroBeleg</div>
+
+    <div class="cap">Меню</div>
+    <div class="nav active">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+      Обзор
+    </div>
+    <div class="nav">
+      <svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/></svg>
+      Документы
+    </div>
+    <div class="nav">
+      <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+      Аналитика
+    </div>
+    <div class="nav">
+      <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg>
+      Каталог
+    </div>
+    <div class="nav">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      Поставщики
+    </div>
+
+    <div class="cap">Прочее</div>
+    <div class="nav">
+      <svg viewBox="0 0 24 24"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+      Экспорт · DATEV
+    </div>
+    <div class="nav">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+      Настройки
+    </div>
+
+    <div class="spacer"></div>
+    <div class="me"><span class="av">М</span><div><b>Марко Т.</b><small>Trattoria Bella</small></div></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="top">
+      <div>
+        <h1>Обзор</h1>
+        <div class="sub">Управляй закупками с контролем цен — быстро и точно.</div>
+      </div>
+      <div class="tools">
+        <span class="search">Поиск по документам…</span>
+        <button class="pill-btn">📅 Январь — Июнь 2026</button>
+        <button class="btn btn-primary">＋ Загрузить документ</button>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpis">
+      <div class="card kpi"><div class="lbl">Расходы · июнь</div><div class="val tnum">12.480,50 €</div><div class="chg up">▲ +8% к прошлому месяцу</div></div>
+      <div class="card kpi"><div class="lbl">Pfand-баланс</div><div class="val tnum">340,00 €</div><div class="chg down">▼ возвращено 60 €</div></div>
+      <div class="card kpi"><div class="lbl">Документов обработано</div><div class="val tnum">148</div><div class="chg" style="color:var(--muted)">6 на проверку</div></div>
+    </div>
+
+    <div class="grid">
+      <!-- left column -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card">
+          <h2>Расходы по месяцам</h2>
+          <div class="legend"><span><i style="background:var(--green)"></i>Продукты (7%)</span><span><i style="background:var(--lime)"></i>Напитки (19%)</span></div>
+          <div class="bars">
+            <div class="bcol"><div class="bstack"><span style="height:22px;background:var(--lime)"></span><span style="height:58px;background:var(--green)"></span></div><small>Фев</small></div>
+            <div class="bcol"><div class="bstack"><span style="height:30px;background:var(--lime)"></span><span style="height:66px;background:var(--green)"></span></div><small>Мар</small></div>
+            <div class="bcol"><div class="bstack"><span style="height:26px;background:var(--lime)"></span><span style="height:50px;background:var(--green)"></span></div><small>Апр</small></div>
+            <div class="bcol"><div class="bstack"><span style="height:40px;background:var(--lime)"></span><span style="height:74px;background:var(--green)"></span></div><small>Май</small></div>
+            <div class="bcol"><div class="bstack"><span style="height:34px;background:var(--lime)"></span><span style="height:92px;background:var(--green)"></span></div><small>Июн</small></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Последние документы</h2>
+          <div class="hint">6 требуют проверки</div>
+          <div class="lrow"><div class="l"><span class="ic">🥩</span><div>Metzgerei Wolf<small>Lieferschein · 03.06.2026</small></div></div><div style="text-align:right"><b class="tnum">312,40 €</b><br><span class="tag2 t-ok">Проведено</span></div></div>
+          <div class="lrow"><div class="l"><span class="ic">🥛</span><div>Sahne 30%, 5 л<small>Molkerei Süd · 02.06.2026</small></div></div><div style="text-align:right"><b class="tnum">18,90 €</b><br><span class="tag2 t-warn">Проверить цену</span></div></div>
+          <div class="lrow"><div class="l"><span class="ic">🍺</span><div>Getränke Kraft<small>Rechnung · 01.06.2026</small></div></div><div style="text-align:right"><b class="tnum">204,00 €</b><br><span class="tag2 t-pf">Pfand 48 €</span></div></div>
+          <div class="lrow"><div class="l"><span class="ic">🥖</span><div>Bäckerei Ott<small>Lieferschein · 01.06.2026</small></div></div><div style="text-align:right"><b class="tnum">64,20 €</b><br><span class="tag2 t-ok">Проведено</span></div></div>
+        </div>
+      </div>
+
+      <!-- right column -->
+      <div style="display:flex;flex-direction:column;gap:16px">
+        <div class="card donut-wrap">
+          <h2 style="align-self:flex-start">Структура затрат</h2>
+          <div class="donut"><div class="c"><b class="tnum">12.480 €</b><small>всего · июнь</small></div></div>
+          <div class="cats">
+            <div class="r"><span><i style="width:9px;height:9px;border-radius:3px;background:var(--green);display:inline-block"></i>Мясо и рыба</span><b class="tnum">46%</b></div>
+            <div class="r"><span><i style="width:9px;height:9px;border-radius:3px;background:var(--lime);display:inline-block"></i>Напитки</span><b class="tnum">26%</b></div>
+            <div class="r"><span><i style="width:9px;height:9px;border-radius:3px;background:var(--sage-tint);display:inline-block"></i>Овощи</span><b class="tnum">16%</b></div>
+            <div class="r"><span><i style="width:9px;height:9px;border-radius:3px;background:#cdd8c4;display:inline-block"></i>Прочее</span><b class="tnum">12%</b></div>
+          </div>
+        </div>
+
+        <!-- signature dark-green alert card (like ref's "Update") -->
+        <div class="alert">
+          <span class="tag">● Контроль цен</span>
+          <h3>Сливки <b>+12%</b> за неделю</h3>
+          <p>Molkerei Süd поднял цену на Sahne 30%. Маржа Lachsfilet под целевым уровнем.</p>
+          <a href="#">Сравнить поставщиков →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="note">Style probe · палитра Forest &amp; Lime извлечена из референса · данные-заглушки · тема одиночная (светлая с тёмным сайдбаром)</div>
+  </main>
+</div>
+</body>
+</html>

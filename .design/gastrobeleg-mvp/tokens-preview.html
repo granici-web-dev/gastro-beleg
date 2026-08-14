@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GastroBeleg — Design Tokens Preview</title>
+<link rel="stylesheet" href="DESIGN_TOKENS.css">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: var(--font-family-body); background: #cfcac2; }
+  .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 0; min-height: 100vh; }
+  @media (max-width: 800px){ .wrap{ grid-template-columns:1fr; } }
+  .pane {
+    background: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    padding: var(--space-6);
+  }
+  h1 { font-size: var(--font-size-xl); letter-spacing: var(--letter-spacing-tight); margin:0 0 var(--space-1); }
+  .sub { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-bottom: var(--space-6); }
+  h2 { font-size: var(--font-size-sm); text-transform: uppercase; letter-spacing: var(--letter-spacing-wide);
+       color: var(--color-text-tertiary); margin: var(--space-6) 0 var(--space-3); }
+  .swatches { display:flex; flex-wrap:wrap; gap: var(--space-2); }
+  .sw { width:96px; }
+  .chip { height:48px; border-radius: var(--border-radius-sm); border:1px solid var(--color-border-primary); }
+  .sw small { display:block; color: var(--color-text-tertiary); font-size:11px; margin-top:4px; }
+  .card { background: var(--color-bg-secondary); border:1px solid var(--color-border-primary);
+          border-radius: var(--border-radius-lg); box-shadow: var(--shadow-md); padding: var(--space-5); margin-bottom: var(--space-4); }
+  .kpi { font-size: var(--font-size-3xl); font-weight: var(--font-weight-semibold); line-height:1.1;
+         font-variant-numeric: tabular-nums lining-nums; }
+  .kpi-label { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-bottom: var(--space-1); }
+  .row { display:flex; align-items:center; justify-content:space-between; padding: var(--space-3) 0;
+         border-bottom:1px solid var(--color-border-secondary); font-size: var(--font-size-sm); }
+  .row:last-child{ border-bottom:0; }
+  .num { font-variant-numeric: tabular-nums lining-nums; color: var(--color-text-primary); }
+  .btn { height: var(--control-height-md); padding: 0 var(--space-4); border-radius: var(--border-radius-md);
+         border:0; font-weight: var(--font-weight-medium); font-size: var(--font-size-base); cursor:pointer; }
+  .btn-primary { background: var(--color-accent-primary); color: var(--color-text-on-accent); }
+  .btn-secondary { background: var(--color-bg-tertiary); color: var(--color-text-primary);
+                   border:1px solid var(--color-border-primary); }
+  .btns { display:flex; gap: var(--space-3); align-items:center; }
+  .pill { display:inline-flex; align-items:center; gap:6px; padding:3px 10px; border-radius: var(--border-radius-full);
+          font-size: var(--font-size-xs); font-weight: var(--font-weight-medium); }
+  .dot { width:7px; height:7px; border-radius:50%; }
+  .p-warn { background: var(--color-status-warning-subtle); color: var(--color-status-warning); }
+  .p-ok   { background: var(--color-status-success-subtle); color: var(--color-status-success); }
+  .p-err  { background: var(--color-status-error-subtle); color: var(--color-status-error); }
+  .p-info { background: var(--color-status-info-subtle); color: var(--color-status-info); }
+  .lowconf { background: var(--color-confidence-low-bg); outline: 2px solid var(--color-confidence-low);
+             border-radius: var(--border-radius-sm); padding: 2px 6px; }
+  .type-row{ display:flex; align-items:baseline; gap: var(--space-3); margin-bottom: var(--space-2); }
+  .type-row span:first-child{ color: var(--color-text-tertiary); font-size:11px; width:34px; }
+  .theme-tag{ display:inline-block; font-size:11px; color:var(--color-text-tertiary);
+              border:1px solid var(--color-border-primary); border-radius:var(--border-radius-full); padding:2px 10px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- LIGHT -->
+  <section class="pane" data-theme="light">
+    <span class="theme-tag">Светлая тема</span>
+    <h1 style="margin-top:12px">GastroBeleg</h1>
+    <div class="sub">Forest &amp; Lime — green primary + lime акцент, амбер/красный/синий = статусы</div>
+
+    <h2>Основные цвета</h2>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--color-accent-primary)"></div><small>accent (green)</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-accent-lime)"></div><small>lime (accent)</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-status-success)"></div><small>success</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-status-warning)"></div><small>warning</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-status-error)"></div><small>error</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-status-info)"></div><small>info</small></div>
+    </div>
+
+    <h2>Нейтрали</h2>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--color-bg-primary)"></div><small>bg</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-bg-secondary)"></div><small>card</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-bg-tertiary)"></div><small>input</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-text-secondary)"></div><small>text 2°</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-text-primary)"></div><small>text 1°</small></div>
+    </div>
+
+    <h2>Типографика</h2>
+    <div class="type-row"><span>44</span><span style="font-size:var(--font-size-4xl);font-weight:600;letter-spacing:-.02em">Belegübersicht</span></div>
+    <div class="type-row"><span>24</span><span style="font-size:var(--font-size-xl);font-weight:600">Lieferschein prüfen</span></div>
+    <div class="type-row"><span>16</span><span style="font-size:var(--font-size-base)">Основной текст — быстро и читаемо на кухне.</span></div>
+    <div class="type-row"><span>14</span><span style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">Вторичный текст и плотные таблицы</span></div>
+
+    <h2>Компоненты</h2>
+    <div class="card">
+      <div class="kpi-label">Расходы · июнь</div>
+      <div class="kpi">12.480,50 €</div>
+      <div style="margin-top:10px" class="btns">
+        <span class="pill p-err"><span class="dot" style="background:currentColor"></span>Сливки +12%</span>
+        <span class="pill p-ok"><span class="dot" style="background:currentColor"></span>Проведено</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row"><span>Rindergulasch, 5&nbsp;kg</span><span class="num">64,50 €</span></div>
+      <div class="row"><span>Sahne 30% <span class="lowconf">1,<u>?</u>9 €</span></span><span class="pill p-warn">Проверить</span></div>
+      <div class="row"><span>Pfand Leergut</span><span class="pill p-info">Pfand</span></div>
+    </div>
+    <div class="btns">
+      <button class="btn btn-primary">Сфотографировать</button>
+      <button class="btn btn-secondary">Позже</button>
+    </div>
+  </section>
+
+  <!-- DARK -->
+  <section class="pane" data-theme="dark">
+    <span class="theme-tag">Тёмная тема</span>
+    <h1 style="margin-top:12px">GastroBeleg</h1>
+    <div class="sub">Тёмный green-charcoal, смягчённый текст (не чистый белый на чёрном)</div>
+
+    <h2>Основные цвета</h2>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--color-accent-primary)"></div><small>accent (green)</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-accent-lime)"></div><small>lime (accent)</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-status-success)"></div><small>success</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-status-warning)"></div><small>warning</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-status-error)"></div><small>error</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-status-info)"></div><small>info</small></div>
+    </div>
+
+    <h2>Нейтрали</h2>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:var(--color-bg-primary)"></div><small>bg</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-bg-secondary)"></div><small>card</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-bg-tertiary)"></div><small>input</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-text-secondary)"></div><small>text 2°</small></div>
+      <div class="sw"><div class="chip" style="background:var(--color-text-primary)"></div><small>text 1°</small></div>
+    </div>
+
+    <h2>Типографика</h2>
+    <div class="type-row"><span>44</span><span style="font-size:var(--font-size-4xl);font-weight:600;letter-spacing:-.02em">Belegübersicht</span></div>
+    <div class="type-row"><span>24</span><span style="font-size:var(--font-size-xl);font-weight:600">Lieferschein prüfen</span></div>
+    <div class="type-row"><span>16</span><span style="font-size:var(--font-size-base)">Основной текст — быстро и читаемо на кухне.</span></div>
+    <div class="type-row"><span>14</span><span style="font-size:var(--font-size-sm);color:var(--color-text-secondary)">Вторичный текст и плотные таблицы</span></div>
+
+    <h2>Компоненты</h2>
+    <div class="card">
+      <div class="kpi-label">Расходы · июнь</div>
+      <div class="kpi">12.480,50 €</div>
+      <div style="margin-top:10px" class="btns">
+        <span class="pill p-err"><span class="dot" style="background:currentColor"></span>Сливки +12%</span>
+        <span class="pill p-ok"><span class="dot" style="background:currentColor"></span>Проведено</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row"><span>Rindergulasch, 5&nbsp;kg</span><span class="num">64,50 €</span></div>
+      <div class="row"><span>Sahne 30% <span class="lowconf">1,<u>?</u>9 €</span></span><span class="pill p-warn">Проверить</span></div>
+      <div class="row"><span>Pfand Leergut</span><span class="pill p-info">Pfand</span></div>
+    </div>
+    <div class="btns">
+      <button class="btn btn-primary">Сфотографировать</button>
+      <button class="btn btn-secondary">Позже</button>
+    </div>
+  </section>
+
+</div>
+</body>
+</html>
