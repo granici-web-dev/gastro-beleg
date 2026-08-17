@@ -137,6 +137,17 @@ restaurant actually pays early, which depends on cash they may not have. The
 product may show "47 € expire in three days". It may not claim to have saved
 them.
 
+This has two consequences that are easy to get wrong:
+
+- **Wording, everywhere.** The column is `Skonto-Betrag`, never `Ersparnis`;
+  the tile says "noch erreichbar"; the day card says "Skonto möglich". Nothing
+  says *gespart* until a payment is confirmed. This is not tone — `Ersparnis`
+  states a saving as fact, and the fact is not in evidence.
+- **The savings-event log writes on payment, not on display.** A discount that
+  was merely shown is not found money. If the counter starts booking discounts
+  nobody took, the first reconciliation against a bank statement destroys the
+  one number the subscription is defended with.
+
 ### 2.2 Built in Phase 1 although the UI is Phase 2
 
 Three things cannot be reconstructed retroactively, so the *data* ships now
