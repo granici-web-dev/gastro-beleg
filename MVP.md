@@ -95,10 +95,47 @@ keeping; its lack of a database is the point where real work starts.
 7. **Food-cost dashboard** — spend by category / supplier / month, price
    history per product, largest price increases, Pfand balance per supplier.
 8. **DATEV export** — EXTF Buchungsstapel CSV, SKR03 default, SKR04
-   selectable, 7/19 % split per line, Pfand to its own account.
+   selectable, 7/19 % split per line, Pfand to its own account. Delivered as a
+   ZIP: the CSV plus the original documents, so the Kanzlei gets the
+   Buchungsstapel and the Belege in one download. See §8a.
 9. **Universal CSV/Excel export** of line items.
 10. **GoBD archive** — original stored immutably, full audit trail, Z3 export.
-11. **Accounts and billing** — tenants, locations, three roles, Stripe, trial.
+11. **Accounts and billing** — tenants, locations, four roles, Stripe, trial.
+12. **Payment terms and Skonto** — due date and discount terms read from the
+    invoice, a week-ahead payment list, and a warning before a discount
+    expires. Pure arithmetic on fields the same parser already sees.
+13. **Duplicate-payment protection, stated as money** — the duplicate rule
+    already exists; what ships with it is the sentence a person understands
+    ("this invoice is already paid") and a savings-event row.
+14. **Supplier price comparison per catalog item** — the mapping already
+    normalises every supplier's wording to one item and one base unit, so
+    "who is cheaper per kg" is a query over data the MVP has anyway.
+15. **Weekly summary by email** — what was processed, which prices moved, what
+    is due, where a discount is about to expire, what was not lost.
+
+### 2.1a Why these five, and why now
+
+Added on 17 August 2026, deliberately breaking the "the MVP does not grow"
+rule. The justification is one property they share: **none of them depends on
+the vision model being good.** They run on structured e-invoices and on
+arithmetic. If R1 turns out badly — if a crumpled Metro receipt cannot be read
+reliably — the product still does something a restaurant will pay for. That is
+worth roughly two and a half weeks.
+
+Each also passes three tests that keep the MVP from bloating further:
+
+1. **It works on document number one.** Nothing here needs three months of
+   history, so nothing here is an empty screen during a demo.
+2. **It is deterministic.** No new model behaviour, no new failure mode.
+3. **It adds no new document type.** This is the test that keeps contract
+   radar, subscription tracking and energy monitoring out — each is cheap on
+   its own, and each needs months of history plus a new parsing path. They
+   stay in Phase 2, Wave D.
+
+**One honest limit on the Skonto number.** A discount is only realised if the
+restaurant actually pays early, which depends on cash they may not have. The
+product may show "47 € expire in three days". It may not claim to have saved
+them.
 
 ### 2.2 Built in Phase 1 although the UI is Phase 2
 
@@ -118,17 +155,31 @@ even though the *screens* do not:
 - Supplier ordering.
 - Outgoing invoice creation.
 - Everything in Phase 2 and 3: reconciliation of delivery note against invoice,
-  Gutschrift tracking, DSFinV-K import, WhatsApp intake, contract radar, menu
-  scanning, margin per dish, QR menu, Steuerberater portal, regional price
+  Gutschrift tracking, DSFinV-K import, WhatsApp intake, contract radar, energy
+  monitoring, menu scanning, margin per dish, QR menu, regional price
   benchmark. The prototype shows screens for these on purpose — they are the
   demo story, not the build order. Every one of them is behind a feature flag.
+- **The Steuerberater *portal* stays out; the Steuerberater *role* is in.** The
+  role is a login with a permission set on the tenant's own data (§7a). The
+  portal — a Kanzlei working across many restaurants, its own dashboard, its own
+  billing — is a second product and belongs to Phase 2 at the earliest.
 
 ---
 
 ## 3. Screen inventory
 
-44 screens: 20 desktop, 24 mobile. Mobile is the primary device — the phone in
+47 screens: 22 desktop, 25 mobile. Mobile is the primary device — the phone in
 a kitchen is the one that photographs the delivery note.
+
+**Three screens were added on 17 August 2026** with the features in §2.1a:
+`Fälligkeiten` (desktop and mobile) and `Kanzlei-Ansicht` (desktop only — an
+accountant works at a desk). Two of the new features need no screen at all:
+duplicate-payment protection is copy on a finding that already exists, and the
+supplier price comparison is a panel inside `Katalog`, because it is a property
+of a catalog item rather than a place of its own.
+
+**`Fälligkeiten` is a tab under Belege, not an eighth sidebar entry.** It is
+the same documents in due-date order. The sidebar stays at seven.
 
 The Figma page `MVP · Ready for Dev` holds them, and it is the visual
 reference. The prototype route beside each screen in the table below is where
@@ -141,32 +192,34 @@ eleven because it also demonstrates Phase 2 — Abgleich, Kassendaten, Kosten an
 Speisekarte appear only when their feature flag is on. A build that ships eleven
 entries has shipped four dead ends.
 
-### Desktop (20)
+### Desktop (22)
 
 | # | Screen | Route | Notes |
 |---|---|---|---|
 | 1 | Übersicht | `/uebersicht` | Food-cost dashboard. Landing screen after login. |
 | 2 | Belege | `/belege` | List, filter by status, source, supplier, period. |
 | 3 | Beleg prüfen | `/belege/[id]` | **The core screen.** See §7. |
-| 4 | Analyse | `/analyse` | Purchase analysis, price history. |
-| 5 | Katalog | `/katalog` | Catalog items, supplier mappings, unit conversions. |
-| 6 | Lieferanten | `/lieferanten` | Suppliers, per-supplier Pfand balance. |
-| 7 | DATEV-Export | `/export` | Produces the Buchungsstapel. |
-| 8 | Einstellungen · Betrieb | `/einstellungen/betrieb` | Tenant, locations. |
-| 9 | Einstellungen · Nutzer | `/einstellungen/nutzer` | Roles, invitations. |
-| 10 | Einstellungen · Buchhaltung | `/einstellungen/buchhaltung` | SKR03/04, account mapping, tolerances, thresholds, retention. |
-| 11 | Einstellungen · Rechtliches | `/einstellungen/rechtliches` | AVV, Impressum, data export and deletion. |
-| 12 | Einstellungen · Tarif | `/einstellungen/tarif` | Plan, document quota, top-up packs. |
-| 13 | Modal · Artikel zuordnen | over `/katalog` | Map a supplier string to a catalog item. |
-| 14 | Modal · Neuer Artikel | over `/katalog` | Create catalog item with base unit. |
-| 15 | Modal · Neuer Lieferant | over `/lieferanten` | |
-| 16 | Modal · Nutzer einladen | over `/einstellungen/nutzer` | |
-| 17 | Modal · Tarif wechseln | over `/einstellungen/tarif` | |
-| 18 | Registrierung | `/registrieren` | |
-| 19 | Anmelden | `/login` | |
-| 20 | Passwort zurücksetzen | `/passwort` | |
+| 4 | Fälligkeiten | `/faelligkeiten` | Tab under Belege. Payment week ahead, Skonto about to expire. |
+| 5 | Kanzlei-Ansicht | `/kanzlei` | What the Steuerberater role sees. Read + export only; see §7a. |
+| 6 | Analyse | `/analyse` | Purchase analysis, price history. |
+| 7 | Katalog | `/katalog` | Catalog items, supplier mappings, unit conversions, **supplier price comparison per item**. |
+| 8 | Lieferanten | `/lieferanten` | Suppliers, per-supplier Pfand balance. |
+| 9 | DATEV-Export | `/export` | Produces the Buchungsstapel ZIP; see §8a. |
+| 10 | Einstellungen · Betrieb | `/einstellungen/betrieb` | Tenant, locations. |
+| 11 | Einstellungen · Nutzer | `/einstellungen/nutzer` | Four roles, invitations. |
+| 12 | Einstellungen · Buchhaltung | `/einstellungen/buchhaltung` | SKR03/04, account mapping, tolerances, thresholds, retention. |
+| 13 | Einstellungen · Rechtliches | `/einstellungen/rechtliches` | AVV, Impressum, data export and deletion. |
+| 14 | Einstellungen · Tarif | `/einstellungen/tarif` | Plan, document quota, top-up packs. |
+| 15 | Modal · Artikel zuordnen | over `/katalog` | Map a supplier string to a catalog item. |
+| 16 | Modal · Neuer Artikel | over `/katalog` | Create catalog item with base unit. |
+| 17 | Modal · Neuer Lieferant | over `/lieferanten` | |
+| 18 | Modal · Nutzer einladen | over `/einstellungen/nutzer` | Role picker now has four entries. |
+| 19 | Modal · Tarif wechseln | over `/einstellungen/tarif` | |
+| 20 | Registrierung | `/registrieren` | |
+| 21 | Anmelden | `/login` | |
+| 22 | Passwort zurücksetzen | `/passwort` | |
 
-### Mobile (24)
+### Mobile (25)
 
 Tab bar: Übersicht · Belege · **[Scan]** · Analyse · Mehr. Scan is a raised
 centre action, not a tab — it is the primary job.
@@ -179,17 +232,18 @@ centre action, not a tab — it is the primary job.
 | 4 | Analyse | `/analyse` |
 | 5 | Mehr | menu sheet |
 | 6 | Beleg prüfen | `/belege/[id]` |
-| 7 | Katalog | `/katalog` |
-| 8 | Lieferanten | `/lieferanten` |
-| 9 | DATEV-Export | `/export` |
-| 10 | Hochladen | upload sheet |
-| 11 | Einstellungen | `/einstellungen` |
-| 12–15 | Betrieb · Nutzer · Buchhaltung · Rechtliches | `/einstellungen/*` |
-| 16 | Onboarding | `/onboarding` |
-| 17–21 | Sheets: Artikel zuordnen · Neuer Artikel · Neuer Lieferant · Nutzer einladen · Tarif wechseln | bottom sheets |
-| 22 | Registrierung | `/registrieren` |
-| 23 | Anmelden | `/login` |
-| 24 | Passwort zurücksetzen | `/passwort` |
+| 7 | Fälligkeiten | `/faelligkeiten` |
+| 8 | Katalog | `/katalog` |
+| 9 | Lieferanten | `/lieferanten` |
+| 10 | DATEV-Export | `/export` |
+| 11 | Hochladen | upload sheet |
+| 12 | Einstellungen | `/einstellungen` |
+| 13–16 | Betrieb · Nutzer · Buchhaltung · Rechtliches | `/einstellungen/*` |
+| 17 | Onboarding | `/onboarding` |
+| 18–22 | Sheets: Artikel zuordnen · Neuer Artikel · Neuer Lieferant · Nutzer einladen · Tarif wechseln | bottom sheets |
+| 23 | Registrierung | `/registrieren` |
+| 24 | Anmelden | `/login` |
+| 25 | Passwort zurücksetzen | `/passwort` |
 
 ### States every screen owes
 
@@ -344,6 +398,63 @@ What it must do:
 
 ---
 
+## 7a. The Steuerberater role
+
+The MVP has **four** roles, not three: Owner, Manager, Staff, Steuerberater.
+The fourth one is the cheapest distribution channel this product has — the
+Kanzlei sits between us and every restaurant it serves — and it costs a role
+plus a permission set.
+
+**A read-only accountant is useless.** Their work starts exactly where ours
+stops: they need the Buchungsstapel out, not the dashboard in. So the role is
+**read + export**, not read-only:
+
+| May | May not |
+|---|---|
+| See documents, line items and findings | Edit any field |
+| Download the original of any document | Book a document |
+| Generate and download a DATEV export batch | Change catalog items or mappings |
+| Download the CSV/Excel line-item export | See or change plan, billing, users |
+| Run the GoBD Z3 export | Delete anything |
+
+**Why booking stays with the restaurant.** It is tempting to let the Kanzlei
+fix a wrong VAT rate and book — that is how the paper process works today. But
+the review screen is where the mapping learns, and the person who knows that
+"RIND HACK 5KG FRISCH" is Rinderhackfleisch works in the kitchen, not in the
+Kanzlei. Move booking to the accountant and the catalog stops learning, price
+history stops filling, and every alert the product sells goes quiet. The audit
+trail is also cleaner when booking has exactly one owner.
+
+What the accountant needs instead of edit rights is a way to send a question
+back — the classic Rückfrage. In the MVP that is one field: a note on a
+document that flips it to "Rückfrage offen" and shows up in the owner's review
+queue. If that turns out to cost more than a day, ship the role without it and
+let them phone; do not ship edit rights as a substitute.
+
+### 8a. What the export has to contain to be usable
+
+A CSV of numbers alone makes the Kanzlei re-attach every Beleg by hand, which
+is the work we claim to remove. The MVP export is therefore a **ZIP**:
+
+- `EXTF_Buchungsstapel.csv` — header version 700, per DATEV document 1034038
+- the original files, named by document number
+- a manifest mapping each booking row to its original file
+
+**To verify against the spec before building:** whether the EXTF record can
+carry a document link (`Beleglink` / BEDI) that DATEV resolves to the image, and
+under what conditions. If it can, populate it — that is the difference between
+an import that lands with its Belege attached and a pile of numbers. The
+sandbox and the DATEV Prüftool (Hilfe-Center 1070393) are open without a
+partnership, so this is answerable in an afternoon and belongs in M5, not in a
+meeting.
+
+Stage 2 — pushing images and structured positions into DATEV Unternehmen
+online through the `accounting:dxso-jobs` API — is Phase 2, and it only helps
+the subset of clients who actually have Unternehmen online. Stage 1 works for
+everyone and never stops being the fallback.
+
+---
+
 ## 8. German domain rules — never violate
 
 These are from `CLAUDE.md` §5 and they are the difference between a working
@@ -379,11 +490,13 @@ a list. No extraction yet.
 *Done when:* a file uploaded through the API is retrievable, its audit row
 exists, and the original cannot be modified.
 
-**M2 — The deterministic half (weeks 2–3)**
+**M2 — The deterministic half (weeks 2–4)**
 Port `app/extraction/` and `app/validation/` behind the pipeline. XRechnung and
-ZUGFeRD end to end, no model call. Golden-file suite in CI.
+ZUGFeRD end to end, no model call. Golden-file suite in CI. **Payment terms and
+due date** join the extraction contract here, while the schema is being
+settled — retrofitting fields after the review UI exists costs more.
 *Done when:* a real supplier XRechnung becomes a document with correct lines,
-VAT split and totals, and the golden suite runs on every push.
+VAT split, totals and due date, and the golden suite runs on every push.
 
 **M3 — The vision half (weeks 3–5)**
 Photo and scanned-PDF route, multi-document splitting, confidence routing.
@@ -392,28 +505,42 @@ milestone cannot start honestly without real documents.
 *Done when:* accuracy is measured on the fixture set and the number is written
 down — see §11.
 
-**M4 — Review and mapping (weeks 5–7)**
+**M4 — Review and mapping (weeks 5–8)**
 `/belege/[id]` against the real API. Supplier product mapping, unit conversion,
-price history written on booking.
-*Done when:* the second document from a supplier needs no manual mapping.
+price history written on booking. **Supplier price comparison per catalog
+item** — it is a query over the mapping built in this milestone, so it costs
+days here and would cost a rebuild later. **Duplicate-payment protection
+restated as money**, writing its savings event. **The prototype restyle to the
+Figma design**, as one pass — see risk R6.
+*Done when:* the second document from a supplier needs no manual mapping, and
+the catalog can answer "who is cheaper per kg".
 
-**M5 — Outputs (weeks 7–9)**
-Food-cost dashboard on real data. DATEV EXTF export validated against the
-spec. CSV export. GoBD Z3 export.
+**M5 — Outputs (weeks 8–10)**
+Food-cost dashboard on real data. DATEV EXTF export validated against the spec
+and delivered as the ZIP described in §8a. CSV export. GoBD Z3 export.
+**Fälligkeiten and Skonto** — the arithmetic and the two screens, on the fields
+M2 already extracts.
 *Done when:* a Steuerberater imports a generated Buchungsstapel into DATEV
-Unternehmen Online without a correction.
+Unternehmen Online without a correction, **and without re-attaching a single
+Beleg by hand**.
 
-**M6 — Accounts, billing, compliance (weeks 9–11)**
-Auth, roles, multi-location, Stripe with SEPA and card, German invoices,
-onboarding questionnaire, legal pages, AVV.
-*Done when:* a stranger can sign up, run the trial, and be charged.
+**M6 — Accounts, billing, compliance (weeks 10–12)**
+Auth, four roles including Steuerberater with its permission set, multi-location,
+Stripe with SEPA and card, German invoices, onboarding questionnaire, legal
+pages, AVV.
+*Done when:* a stranger can sign up, run the trial, and be charged — and an
+invited Kanzlei can log in, download the Buchungsstapel and change nothing.
 
-**M7 — Email intake and hardening (weeks 11–12)**
+**M7 — Email intake and hardening (weeks 12–14)**
 `docs-{tenant}@` addresses, attachment ingestion, dead-letter handling,
-observability, load behaviour on a month of backlog uploaded at once.
+**the weekly summary email**, observability, load behaviour on a month of
+backlog uploaded at once.
 
-The estimate assumes the fixture problem in §11 is solved during M1–M2. It is
-the single dependency most likely to move these dates.
+Two things about these dates. The estimate assumes the fixture problem in §11
+is solved during M1–M2 — that is the single dependency most likely to move
+them. And the plan grew from twelve weeks to fourteen when the features in
+§2.1a were added: about two and a half weeks of work, placed where each piece
+is cheapest rather than bolted on at the end.
 
 ---
 

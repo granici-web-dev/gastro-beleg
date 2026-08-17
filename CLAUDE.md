@@ -69,7 +69,9 @@ Validation rules (hard requirements):
    Retention is a per-tenant setting, never a constant in code.
 
 ### 2.5 Accounts, billing, compliance
-- Multi-location tenants, roles: Owner / Manager / Staff (staff = upload only)
+- Multi-location tenants, roles: Owner / Manager / Staff / Steuerberater
+  (staff = upload only; Steuerberater = read + export, never edit or book —
+  booking stays with the restaurant or the catalog stops learning. See `MVP.md` § 7a)
 - Pricing: pay-per-document packages. Tiers 39 / 89 / 149 €/mo (≈ 80 / 200 / 400 docs), top-up packs that never expire.
   14-day trial, 30 documents, no credit card.
 - Stripe billing (SEPA + card), German invoices with correct USt
