@@ -12,7 +12,7 @@ Companion documents:
 | `README.md` | Honest state of the repository, including what is unproven. |
 | `.research/06-Implement/roadmap.md` | Phase 2 and 3, with the reasoning behind the order. Russian. |
 | `web/` | The clickable prototype. Correct **behaviour and data shapes**, superseded styling — see below. |
-| Figma page `MVP · Ready for Dev` | The 54 screens. **The visual reference.** |
+| Figma page `MVP · Ready for Dev` | The 66 screens. **The visual reference.** |
 
 ### The two design surfaces, and which wins
 
@@ -20,7 +20,7 @@ Companion documents:
 founder reviewed both and chose the Figma design; that decision is what this
 document is written against.
 
-- **`MVP · Ready for Dev`** — the 54 MVP screens in the approved *Forest &
+- **`MVP · Ready for Dev`** — the 66 MVP screens in the approved *Forest &
   Lime* design, in German, at MVP scope. It is the page `Screens V2.0` with two
   deliberate narrowings: the Phase 2 tab rows are removed, and the copy comes
   from `Screens V3.0` rather than V2's half-translated Russian. Dev Mode
@@ -179,7 +179,7 @@ even though the *screens* do not:
 
 ## 3. Screen inventory
 
-54 screens: 28 desktop, 26 mobile. Mobile is the primary device — the phone in
+66 screens: 35 desktop, 31 mobile. Mobile is the primary device — the phone in
 a kitchen is the one that photographs the delivery note.
 
 **Three screens were added on 17 August 2026** with the features in §2.1a:
@@ -203,7 +203,7 @@ eleven because it also demonstrates Phase 2 — Abgleich, Kassendaten, Kosten an
 Speisekarte appear only when their feature flag is on. A build that ships eleven
 entries has shipped four dead ends.
 
-### Desktop (28)
+### Desktop (35)
 
 | # | Screen | Route | Notes |
 |---|---|---|---|
@@ -230,7 +230,12 @@ entries has shipped four dead ends.
 | 21 | Anmelden | `/login` | |
 | 22 | Passwort zurücksetzen | `/passwort` | |
 
-### Mobile (26)
+
+> The rows above are the primary screens. The modals, sheets and state
+> screens that make up the rest of the 35 are in the two tables below —
+> the Figma section name is the authority on the count.
+
+### Mobile (31)
 
 Tab bar: Übersicht · Belege · **[Scan]** · Analyse · Mehr. Scan is a raised
 centre action, not a tab — it is the primary job.
@@ -256,6 +261,10 @@ centre action, not a tab — it is the primary job.
 | 24 | Anmelden | `/login` |
 | 25 | Passwort zurücksetzen | `/passwort` |
 
+
+> As on desktop: the rows above are the primary screens; sheets and state
+> screens complete the 31 and are listed in the two tables below.
+
 ### The seven steps that had no screen — now built
 
 Walking the seven user journeys end to end (Figma page `User Flow · MVP`)
@@ -263,7 +272,7 @@ found seven steps a person really takes that nothing in the original 47
 screens covered. The inventory itself was complete and matched this document
 — these were steps that were never on the list, which is why a list review
 could not have found them. All seven are now built: **three screens, three
-states and one panel**, which is why the count is 54 and not 47.
+states and one panel**, which took the count from 47 to 54.
 
 | Step | Why it mattered | Built as |
 |---|---|---|
@@ -275,17 +284,49 @@ states and one panel**, which is why the count is 54 and not 47.
 | **Rückfrage from the Kanzlei** | Introduced in §7a. The accountant asks; the owner has to see it in the review queue. | `Beleg prüfen · Rückfrage` — a banner above the document, with the question and who asked |
 | **Document quota exhausted** | 200 of 200 will happen to every paying customer. Billing is in the MVP; this state was not. | `Modal · Kontingent erschöpft` — top-up or upgrade, and the promise that intake and the GoBD archive keep running |
 
-### States every screen owes
+### States every screen owes — twelve of them are drawn
 
 Not optional, and not a polish pass at the end. A list screen that has only
-its full state is half a screen:
+its full state is half a screen. The four families:
 
-- **empty** — first login, no documents at all, and the different empty of
-  "no results for this filter"
-- **loading** — skeletons, not spinners, for anything that has a known shape
+- **empty** — first login with no documents at all, and the *different* empty
+  of "no results for this filter"
+- **loading** — skeletons, not spinners, for anything with a known shape
 - **error** — what failed and what the person can do about it
 - **partial** — extraction succeeded but confidence is low, or the document is
   blocked from booking
+
+An audit on 17.08.2026 found that only one of these was drawn, on one
+platform. Twelve are drawn now; the count went 54 → 66.
+
+| # | Screen | What it settles |
+|---|---|---|
+| 55 | `Beleg prüfen · Blockierende Prüfung — Desktop` | Booking refused while a blocking finding stands: `Beleg buchen` on the kit's `State=Disabled`, the reason beside it, the two failing lines grounded red. Warnings never block. Also carries the **Pfand column** and the per-line VAT rate, both of which the base screen was missing |
+| 56 | `Beleg prüfen · Dublette — Desktop` | The duplicate stated in money — "a second booking would be 133,90 € twice, and paid twice" — with two exits: discard, or record anyway with a mandatory reason |
+| 57 | `Übersicht · Erster Tag — Desktop` | The first screen every trial user meets. Not zeroed tiles: the three intake routes, and what the page will show once documents exist |
+| 58 | `Übersicht · Erster Tag — Mobile` | Same, one column, camera first |
+| 59 | `Belege · Verarbeitung und Fehler — Desktop` | The async pipeline on the desktop, which had none: reading with a progress bar, failed with two exits, queued |
+| 60 | `Belege · Kein Treffer — Desktop` | Filter-empty, which is a different screen from data-empty: the active filter restated in words, the unfiltered count offered as the way out |
+| 61 | `DATEV-Export · Stapel veraltet — Desktop` | The situation the Storno dialog itself creates. A batch already handed over is never edited — it is marked stale and regenerated, both versions kept |
+| 62 | `Kanzlei-Ansicht · Rückfrage stellen — Desktop` | The missing middle of the Rückfrage loop: how the Steuerberater actually asks, anchored to one document and one line |
+| 63 | `Beleg prüfen · Rückfrage — Mobile` | The other end: the owner answers on the phone. Above the validation panel, because a human question is not a validation finding |
+| 64 | `Beleg scannen · Kein Netz — Mobile` | Recognition is server-side, so offline capture queues locally and says so. The chip must not claim a document was recognised offline |
+| 65 | `Sheet · Mehrere Belege erkannt — Mobile` | Split confirmation on the device where multi-document photos are taken, with the quota cost stated before confirming |
+| 66 | `Sheet · Kontingent erschöpft — Mobile` | Quota exhaustion strikes mid-scan on the phone. Intake and the GoBD archive keep running; only reading pauses |
+
+**Still open, and deliberately not invented in Figma:**
+
+- **loading skeletons** — specified above, not drawn; shape follows each list
+- **role-scoped variants for Staff and Manager** — Staff uploads only, so six
+  of seven sidebar entries are either hidden or denied. Which one is a product
+  decision about the permission model, not a drawing, and it is on the open
+  list in §12
+- **`Trennung ändern`** — the merge/split editor behind that button. Annotated
+  as undesigned on both split screens; raise it before estimating
+- **the `Fälligkeiten` tab row** — `Fälligkeiten — Desktop` presents itself as
+  a tab of `Belege`, but `Belege` has no such row. Both `Belege` screens now
+  carry an annotation saying the row is owed; adding it is a navigation
+  decision
 
 ---
 
