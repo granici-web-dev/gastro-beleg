@@ -12,7 +12,7 @@ Companion documents:
 | `README.md` | Honest state of the repository, including what is unproven. |
 | `.research/06-Implement/roadmap.md` | Phase 2 and 3, with the reasoning behind the order. Russian. |
 | `web/` | The clickable prototype. Correct **behaviour and data shapes**, superseded styling — see below. |
-| Figma page `MVP · Ready for Dev` | The 44 screens. **The visual reference.** |
+| Figma page `MVP · Ready for Dev` | The 54 screens. **The visual reference.** |
 
 ### The two design surfaces, and which wins
 
@@ -20,7 +20,7 @@ Companion documents:
 founder reviewed both and chose the Figma design; that decision is what this
 document is written against.
 
-- **`MVP · Ready for Dev`** — the 44 MVP screens in the approved *Forest &
+- **`MVP · Ready for Dev`** — the 54 MVP screens in the approved *Forest &
   Lime* design, in German, at MVP scope. It is the page `Screens V2.0` with two
   deliberate narrowings: the Phase 2 tab rows are removed, and the copy comes
   from `Screens V3.0` rather than V2's half-translated Russian. Dev Mode
@@ -179,7 +179,7 @@ even though the *screens* do not:
 
 ## 3. Screen inventory
 
-47 screens: 22 desktop, 25 mobile. Mobile is the primary device — the phone in
+54 screens: 28 desktop, 26 mobile. Mobile is the primary device — the phone in
 a kitchen is the one that photographs the delivery note.
 
 **Three screens were added on 17 August 2026** with the features in §2.1a:
@@ -203,7 +203,7 @@ eleven because it also demonstrates Phase 2 — Abgleich, Kassendaten, Kosten an
 Speisekarte appear only when their feature flag is on. A build that ships eleven
 entries has shipped four dead ends.
 
-### Desktop (22)
+### Desktop (28)
 
 | # | Screen | Route | Notes |
 |---|---|---|---|
@@ -230,7 +230,7 @@ entries has shipped four dead ends.
 | 21 | Anmelden | `/login` | |
 | 22 | Passwort zurücksetzen | `/passwort` | |
 
-### Mobile (25)
+### Mobile (26)
 
 Tab bar: Übersicht · Belege · **[Scan]** · Analyse · Mehr. Scan is a raised
 centre action, not a tab — it is the primary job.
@@ -256,28 +256,24 @@ centre action, not a tab — it is the primary job.
 | 24 | Anmelden | `/login` |
 | 25 | Passwort zurücksetzen | `/passwort` |
 
-### Seven steps that have no screen yet
+### The seven steps that had no screen — now built
 
 Walking the seven user journeys end to end (Figma page `User Flow · MVP`)
-found seven steps a person really takes that nothing in the 47 screens covers.
-The inventory itself is complete and matches this document — these are steps
-that were never on the list, which is exactly why a list review could not have
-found them.
+found seven steps a person really takes that nothing in the original 47
+screens covered. The inventory itself was complete and matched this document
+— these were steps that were never on the list, which is why a list review
+could not have found them. All seven are now built: **three screens, three
+states and one panel**, which is why the count is 54 and not 47.
 
-| Step | Why it matters | Shape |
+| Step | Why it mattered | Built as |
 |---|---|---|
-| **Storno of a booked document** | The heaviest one. §5 forbids hard deletes: soft-delete and Storno only. The rule has been written since day one and has no interface, so a wrongly booked document currently cannot be corrected at all. | screen |
-| **Upload on desktop** | Mobile has an upload sheet; on desktop the "Beleg erfassen" button leads nowhere. Metro receipts are photographed, but PDFs and XML arrive on a computer. | screen |
-| **Several documents on one photo** | Splitting is §2.1 item 2. The person has to see "three delivery notes recognised" and confirm, or the split happens silently. | screen |
-| **Processing / extraction failed** | The pipeline is async. The most frequent transition in the product — shoot, wait, result — is not designed, nor is the dead-letter case. | state |
-| **Supplier price comparison** | Promised as a panel in `Katalog` (§2.1 item 14); not drawn. | panel |
-| **Rückfrage from the Kanzlei** | Introduced in §7a. The accountant asks; the owner has to see it in the review queue. | state |
-| **Document quota exhausted** | 200 of 200 will happen to every paying customer. Billing is in the MVP; this state is not. | state |
-
-Three screens, three states and one panel — not seven screens. Fold them into
-the milestone where their data already lives: Storno and the quota state in
-M6, upload and split in M3, processing state in M3, comparison panel in M4,
-Rückfrage in M6 with the role.
+| **Storno of a booked document** | The heaviest one. §5 forbids hard deletes: soft-delete and Storno only. The rule had been written since day one with no interface, so a wrongly booked document could not be corrected at all. | `Modal · Beleg stornieren` — reason, and a plain list of what the Storno does to archive, price history, Pfand balance and an export already sent |
+| **Upload on desktop** | Mobile had an upload sheet; on desktop the "Beleg erfassen" button led nowhere. Receipts are photographed, but PDFs and XML arrive on a computer. | `Modal · Beleg hochladen` — drop zone, the tenant email address, the E-Rechnung path |
+| **Several documents on one photo** | Splitting is §2.1 item 2. The person has to see "three delivery notes recognised" and confirm, or the split happens silently — and each split document costs one against the quota. | `Modal · Mehrere Belege erkannt` |
+| **Processing / extraction failed** | The pipeline is async. The most frequent transition in the product — shoot, wait, result — was not designed, nor was the dead-letter case. | `Belege · Verarbeitung und Fehler — Mobile`: reading, failed with two ways out, and queued |
+| **Supplier price comparison** | Promised as a panel in `Katalog` (§2.1 item 14) and not drawn. | `Katalog · Lieferantenvergleich` — all prices converted to the base unit, cheapest marked |
+| **Rückfrage from the Kanzlei** | Introduced in §7a. The accountant asks; the owner has to see it in the review queue. | `Beleg prüfen · Rückfrage` — a banner above the document, with the question and who asked |
+| **Document quota exhausted** | 200 of 200 will happen to every paying customer. Billing is in the MVP; this state was not. | `Modal · Kontingent erschöpft` — top-up or upgrade, and the promise that intake and the GoBD archive keep running |
 
 ### States every screen owes
 
