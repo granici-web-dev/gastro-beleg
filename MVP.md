@@ -256,6 +256,29 @@ centre action, not a tab — it is the primary job.
 | 24 | Anmelden | `/login` |
 | 25 | Passwort zurücksetzen | `/passwort` |
 
+### Seven steps that have no screen yet
+
+Walking the seven user journeys end to end (Figma page `User Flow · MVP`)
+found seven steps a person really takes that nothing in the 47 screens covers.
+The inventory itself is complete and matches this document — these are steps
+that were never on the list, which is exactly why a list review could not have
+found them.
+
+| Step | Why it matters | Shape |
+|---|---|---|
+| **Storno of a booked document** | The heaviest one. §5 forbids hard deletes: soft-delete and Storno only. The rule has been written since day one and has no interface, so a wrongly booked document currently cannot be corrected at all. | screen |
+| **Upload on desktop** | Mobile has an upload sheet; on desktop the "Beleg erfassen" button leads nowhere. Metro receipts are photographed, but PDFs and XML arrive on a computer. | screen |
+| **Several documents on one photo** | Splitting is §2.1 item 2. The person has to see "three delivery notes recognised" and confirm, or the split happens silently. | screen |
+| **Processing / extraction failed** | The pipeline is async. The most frequent transition in the product — shoot, wait, result — is not designed, nor is the dead-letter case. | state |
+| **Supplier price comparison** | Promised as a panel in `Katalog` (§2.1 item 14); not drawn. | panel |
+| **Rückfrage from the Kanzlei** | Introduced in §7a. The accountant asks; the owner has to see it in the review queue. | state |
+| **Document quota exhausted** | 200 of 200 will happen to every paying customer. Billing is in the MVP; this state is not. | state |
+
+Three screens, three states and one panel — not seven screens. Fold them into
+the milestone where their data already lives: Storno and the quota state in
+M6, upload and split in M3, processing state in M3, comparison panel in M4,
+Rückfrage in M6 with the role.
+
 ### States every screen owes
 
 Not optional, and not a polish pass at the end. A list screen that has only
