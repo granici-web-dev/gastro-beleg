@@ -12,7 +12,7 @@ Companion documents:
 | `README.md` | Honest state of the repository, including what is unproven. |
 | `.research/06-Implement/roadmap.md` | Phase 2 and 3, with the reasoning behind the order. Russian. |
 | `web/` | The clickable prototype. Correct **behaviour and data shapes**, superseded styling — see below. |
-| Figma page `MVP · Ready for Dev` | The 66 screens. **The visual reference.** |
+| Figma page `MVP · Ready for Dev` | The 71 screens. **The visual reference.** |
 
 ### The two design surfaces, and which wins
 
@@ -20,7 +20,7 @@ Companion documents:
 founder reviewed both and chose the Figma design; that decision is what this
 document is written against.
 
-- **`MVP · Ready for Dev`** — the 66 MVP screens in the approved *Forest &
+- **`MVP · Ready for Dev`** — the 71 MVP screens in the approved *Forest &
   Lime* design, in German, at MVP scope. It is the page `Screens V2.0` with two
   deliberate narrowings: the Phase 2 tab rows are removed, and the copy comes
   from `Screens V3.0` rather than V2's half-translated Russian. Dev Mode
@@ -179,7 +179,7 @@ even though the *screens* do not:
 
 ## 3. Screen inventory
 
-66 screens: 35 desktop, 31 mobile. Mobile is the primary device — the phone in
+71 screens: 39 desktop, 32 mobile. Mobile is the primary device — the phone in
 a kitchen is the one that photographs the delivery note.
 
 **Three screens were added on 17 August 2026** with the features in §2.1a:
@@ -203,7 +203,7 @@ eleven because it also demonstrates Phase 2 — Abgleich, Kassendaten, Kosten an
 Speisekarte appear only when their feature flag is on. A build that ships eleven
 entries has shipped four dead ends.
 
-### Desktop (35)
+### Desktop (39)
 
 | # | Screen | Route | Notes |
 |---|---|---|---|
@@ -232,10 +232,10 @@ entries has shipped four dead ends.
 
 
 > The rows above are the primary screens. The modals, sheets and state
-> screens that make up the rest of the 35 are in the two tables below —
+> screens that make up the rest of the 39 are in the two tables below —
 > the Figma section name is the authority on the count.
 
-### Mobile (31)
+### Mobile (32)
 
 Tab bar: Übersicht · Belege · **[Scan]** · Analyse · Mehr. Scan is a raised
 centre action, not a tab — it is the primary job.
@@ -263,7 +263,7 @@ centre action, not a tab — it is the primary job.
 
 
 > As on desktop: the rows above are the primary screens; sheets and state
-> screens complete the 31 and are listed in the two tables below.
+> screens complete the 32 and are listed in the two tables below.
 
 ### The seven steps that had no screen — now built
 
@@ -284,7 +284,7 @@ states and one panel**, which took the count from 47 to 54.
 | **Rückfrage from the Kanzlei** | Introduced in §7a. The accountant asks; the owner has to see it in the review queue. | `Beleg prüfen · Rückfrage` — a banner above the document, with the question and who asked |
 | **Document quota exhausted** | 200 of 200 will happen to every paying customer. Billing is in the MVP; this state was not. | `Modal · Kontingent erschöpft` — top-up or upgrade, and the promise that intake and the GoBD archive keep running |
 
-### States every screen owes — twelve of them are drawn
+### States every screen owes — seventeen of them are drawn
 
 Not optional, and not a polish pass at the end. A list screen that has only
 its full state is half a screen. The four families:
@@ -297,7 +297,8 @@ its full state is half a screen. The four families:
   blocked from booking
 
 An audit on 17.08.2026 found that only one of these was drawn, on one
-platform. Twelve are drawn now; the count went 54 → 66.
+platform. Twelve were drawn; a second, adversarial audit found five more holes
+that mattered. Seventeen are drawn now; the count went 54 → 66 → 71.
 
 | # | Screen | What it settles |
 |---|---|---|
@@ -313,6 +314,11 @@ platform. Twelve are drawn now; the count went 54 → 66.
 | 64 | `Beleg scannen · Kein Netz — Mobile` | Recognition is server-side, so offline capture queues locally and says so. The chip must not claim a document was recognised offline |
 | 65 | `Sheet · Mehrere Belege erkannt — Mobile` | Split confirmation on the device where multi-document photos are taken, with the quota cost stated before confirming |
 | 66 | `Sheet · Kontingent erschöpft — Mobile` | Quota exhaustion strikes mid-scan on the phone. Intake and the GoBD archive keep running; only reading pauses |
+| 67 | `Beleg von Hand erfassen — Mobile` | The exit `Von Hand erfassen` promises on the extraction-failed card, which previously led nowhere. Header and totals only; the photo stays attached and in the archive; a retry must not cost a second quota unit |
+| 68 | `Belege · Storniert — Desktop` | What a reversed document looks like afterwards — it never leaves the list or the archive, it loses its effect. Shows the original and the generated reversing entry side by side |
+| 69 | `Modal · Dublette trotzdem erfassen — Desktop` | The mandatory reason behind booking a known duplicate. Allowed — a supplier really can send the same invoice twice — but never silently |
+| 70 | `Fälligkeiten · Zahlung bestätigt — Desktop` | The only event allowed to write a savings record (§2.1a). Confirming the payment, never displaying the discount |
+| 71 | `DATEV-Export · Stapel bereitgestellt — Desktop` | The owner side of `ExportBatch`, which had no representation after the click. Batch history, and why a handed-over batch is never edited |
 
 **Still open, and deliberately not invented in Figma:**
 
