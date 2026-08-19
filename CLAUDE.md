@@ -72,8 +72,29 @@ Validation rules (hard requirements):
 - Multi-location tenants, roles: Owner / Manager / Staff / Steuerberater
   (staff = upload only; Steuerberater = read + export, never edit or book —
   booking stays with the restaurant or the catalog stops learning. See `MVP.md` § 7a)
-- Pricing: pay-per-document packages. Tiers 39 / 89 / 149 €/mo (≈ 80 / 200 / 400 docs), top-up packs that never expire.
-  14-day trial, 30 documents, no credit card.
+- **Pricing is credit-based, not per document.** A document is an event; a credit is what the
+  processing costs. Tiers **39 / 89 / 149 €/mo = 90 / 220 / 450 credits**. Unused credits roll
+  one month forward (capped at one allowance, so they cannot be stockpiled); top-up packs never
+  expire, not even across a tier change. 14-day trial, 30 credits, whichever runs out first, no credit card.
+
+  **The rate follows the source, never the line count.** The restaurateur chooses how a document
+  reaches us; they do not choose how many lines their supplier prints, so billing them for it would
+  make the invoice unpredictable for something they cannot influence.
+
+  | Source | Credits |
+  |---|---|
+  | **E-Rechnung — XRechnung / ZUGFeRD** | **0** |
+  | `Kassenbeleg` ≤ 250 € (Kleinbetragsrechnung) | 0.5 |
+  | Photo or PDF | 1 up to 60 lines, +1 per further 60 |
+  | Manual entry, and any retry after a failed read | 0 |
+
+  **Structured invoices are free because they cost us nothing** — deterministic XML parsing, no
+  model call (§ 4). This is also the wedge: as suppliers move to XRechnung under the 2027/2028
+  mandate, the customer's bill falls on its own. It is the same mechanism as the free
+  E-Rechnung-Posteingang in Phase 3 (§ 3), applied inside the paid tiers.
+
+  Intake and the GoBD archive never stop when credits run out — only reading pauses. A document
+  that arrived is archived and stays retrievable; § 147 AO does not care about our billing.
 - Stripe billing (SEPA + card), German invoices with correct USt
 - Legal pages: Impressum, AGB, Datenschutzerklärung; AVV (DPA) available as PDF
 - **All data and LLM processing in EU.** No US-region inference endpoints.
@@ -119,6 +140,8 @@ Validation rules (hard requirements):
   (normalized product taxonomy, region on tenant). THE long-term moat — platforms can't replicate
   (data locked in their silos), Choco won't (monetizes suppliers).
 - **Free E-Rechnung-Posteingang** as acquisition funnel: free tier = receive/view/archive XRechnung.
+  Consistent with § 2.5, where a structured invoice already costs 0 credits inside the paid tiers —
+  the free tier is the same rule with the paid part removed, not a separate promise.
 - Depth by demand: prime cost, inventory assistant, bank-grade report, multi-location, ask-your-restaurant chat.
 - DESADV/EDI ingestion for chains moving upmarket.
 
