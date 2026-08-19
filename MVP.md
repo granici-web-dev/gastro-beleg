@@ -12,7 +12,7 @@ Companion documents:
 | `README.md` | Honest state of the repository, including what is unproven. |
 | `.research/06-Implement/roadmap.md` | Phase 2 and 3, with the reasoning behind the order. Russian. |
 | `web/` | The clickable prototype. Correct **behaviour and data shapes**, superseded styling — see below. |
-| Figma page `MVP · Ready for Dev` | The 73 screens. **The visual reference.** |
+| Figma page `V4 · Accent Lime` | The 105 screens and the weekly-report e-mail. **The visual reference.** |
 
 ### The two design surfaces, and which wins
 
@@ -20,12 +20,17 @@ Companion documents:
 founder reviewed both and chose the Figma design; that decision is what this
 document is written against.
 
-- **`MVP · Ready for Dev`** — the 73 MVP screens in the approved *Forest &
-  Lime* design, in German, at MVP scope. It is the page `Screens V2.0` with two
-  deliberate narrowings: the Phase 2 tab rows are removed, and the copy comes
-  from `Screens V3.0` rather than V2's half-translated Russian. Dev Mode
-  annotations on ten screens and the sidebar carry the build rules.
-- **`Screens V2.0`** — the approved design in its original form. Reference.
+- **`V4 · Accent Lime`** — the current reference: 119 screens (61 desktop, 58
+  mobile) plus the weekly-report e-mail, in German, at MVP scope. The page
+  carries its own notes block: what the seven sidebar entries are, why a
+  Lieferschein is not a Buchungsbeleg, and why the whole app is scoped to one
+  location. Colour comes from a variable mode, so the page can be restyled
+  without touching any earlier one.
+- **`MVP · Ready for Dev`** — the previous handoff page, 73 screens in the
+  *Forest & Lime* design. Superseded by `V4 · Accent Lime`, which contains
+  everything it had plus the 46 screens added since. Keep until the frontend
+  has taken the new page over, then archive.
+- **`Screens V2.0`** — the original approved design. Reference.
 - **`Screens V3.0`** — the same design componentised, plus 38 Phase 2 and 3
   screens. Reference for Phase 2 only. Untouched.
 - **`MVP · shadcn-Variante (abgelegt)`** — an earlier draft of the MVP page in
@@ -95,9 +100,11 @@ keeping; its lack of a database is the point where real work starts.
 7. **Food-cost dashboard** — spend by category / supplier / month, price
    history per product, largest price increases, Pfand balance per supplier.
 8. **DATEV export** — EXTF Buchungsstapel CSV, SKR03 default, SKR04
-   selectable, 7/19 % split per line, Pfand to its own account. Delivered as a
-   ZIP: the CSV plus the original documents, so the Kanzlei gets the
-   Buchungsstapel and the Belege in one download. See §8a.
+   selectable, 7/19 % split per line, Pfand to its own account. **Lieferscheine
+   are excluded unless the supplier is flagged as billing by delivery note**
+   (§3a) — the invoice is the Buchungsbeleg. Delivered as a ZIP: the CSV plus
+   the original documents, so the Kanzlei gets the Buchungsstapel and the
+   Belege in one download. See §8a.
 9. **Universal CSV/Excel export** of line items.
 10. **GoBD archive** — original stored immutably, full audit trail, Z3 export.
 11. **Accounts and billing** — tenants, locations, four roles, Stripe, trial.
@@ -179,31 +186,29 @@ even though the *screens* do not:
 
 ## 3. Screen inventory
 
-73 screens: 41 desktop, 32 mobile. Mobile is the primary device — the phone in
-a kitchen is the one that photographs the delivery note.
+**119 screens: 61 desktop, 58 mobile, plus one e-mail template.** Mobile is the
+primary device — the phone in a kitchen is the one that photographs the
+delivery note, and it is also where a wrong line gets corrected.
 
-**Three screens were added on 17 August 2026** with the features in §2.1a:
-`Fälligkeiten` (desktop and mobile) and `Kanzlei-Ansicht` (desktop only — an
-accountant works at a desk). Two of the new features need no screen at all:
-duplicate-payment protection is copy on a finding that already exists, and the
-supplier price comparison is a panel inside `Katalog`, because it is a property
-of a catalog item rather than a place of its own.
-
-**`Fälligkeiten` is a tab under Belege, not an eighth sidebar entry.** It is
-the same documents in due-date order. The sidebar stays at seven.
-
-The Figma page `MVP · Ready for Dev` holds them, and it is the visual
-reference. The prototype route beside each screen in the table below is where
-the behaviour already lives — routing, state, editing model — even though its
-styling is superseded.
+How the count grew, and why each step was not padding: 47 screens were the
+original inventory; walking the seven user journeys end to end found **seven
+steps with no screen** (54); three audits of states and document types found
+**nineteen missing states** (73); building the mobile halves of desktop-only
+screens closed the platform gap (90); and the flow audit of **19 August 2026**
+found five dead ends, three scenario holes and four missing mobile states
+(105); and the role variants for Staff and Manager, the last item that was
+open by decision rather than by oversight, took it to 111; the loading
+skeletons took it to 115 and the split editor to 117. Each round found
+less than the one before, which is the only evidence that the list is
+converging.
 
 **The sidebar has seven entries, and that is the MVP.** Übersicht, Belege,
-Analyse, Katalog, Lieferanten, DATEV-Export, Einstellungen. The prototype shows
-eleven because it also demonstrates Phase 2 — Abgleich, Kassendaten, Kosten and
-Speisekarte appear only when their feature flag is on. A build that ships eleven
-entries has shipped four dead ends.
+Analyse, Katalog, Lieferanten, DATEV-Export, Einstellungen. `Fälligkeiten` is a
+tab under Belege, not an eighth entry. Above the menu sits the **location
+switcher** — see §3a. The prototype shows eleven entries because it also
+demonstrates Phase 2; a build that ships eleven has shipped four dead ends.
 
-### Desktop (41)
+### Desktop — the primary screens
 
 | # | Screen | Route | Notes |
 |---|---|---|---|
@@ -213,129 +218,323 @@ entries has shipped four dead ends.
 | 4 | Fälligkeiten | `/faelligkeiten` | Tab under Belege. Payment week ahead, Skonto about to expire. |
 | 5 | Kanzlei-Ansicht | `/kanzlei` | What the Steuerberater role sees. Read + export only; see §7a. |
 | 6 | Analyse | `/analyse` | Purchase analysis, price history. |
-| 7 | Katalog | `/katalog` | Catalog items, supplier mappings, unit conversions, **supplier price comparison per item**. |
-| 8 | Lieferanten | `/lieferanten` | Suppliers, per-supplier Pfand balance. |
-| 9 | DATEV-Export | `/export` | Produces the Buchungsstapel ZIP; see §8a. |
-| 10 | Einstellungen · Betrieb | `/einstellungen/betrieb` | Tenant, locations. |
-| 11 | Einstellungen · Nutzer | `/einstellungen/nutzer` | Four roles, invitations. |
-| 12 | Einstellungen · Buchhaltung | `/einstellungen/buchhaltung` | SKR03/04, account mapping, tolerances, thresholds, retention. |
-| 13 | Einstellungen · Rechtliches | `/einstellungen/rechtliches` | AVV, Impressum, data export and deletion. |
-| 14 | Einstellungen · Tarif | `/einstellungen/tarif` | Plan, document quota, top-up packs. |
-| 15 | Modal · Artikel zuordnen | over `/katalog` | Map a supplier string to a catalog item. |
-| 16 | Modal · Neuer Artikel | over `/katalog` | Create catalog item with base unit. |
-| 17 | Modal · Neuer Lieferant | over `/lieferanten` | |
-| 18 | Modal · Nutzer einladen | over `/einstellungen/nutzer` | Role picker now has four entries. |
-| 19 | Modal · Tarif wechseln | over `/einstellungen/tarif` | |
-| 20 | Registrierung | `/registrieren` | |
-| 21 | Anmelden | `/login` | |
-| 22 | Passwort zurücksetzen | `/passwort` | |
+| 7 | Katalog | `/katalog` | Catalog items, supplier mappings, unit conversions, supplier price comparison per item. |
+| 8 | Lieferanten | `/lieferanten` | Suppliers, per-supplier Pfand balance, **billing mode** (§3a). |
+| 9 | DATEV-Export | `/export` | Buchungsstapel ZIP and the CSV line-item export; see §8a. |
+| 10–13 | Einstellungen · Betrieb / Nutzer / Buchhaltung / Rechtliches | `/einstellungen/*` | |
+| 14 | Einstellungen · Tarif | `/einstellungen/tarif` | Plan, credit balance, top-up packs. |
+| 15–19 | Modals: Artikel zuordnen · Neuer Artikel · Neuer Lieferant · Nutzer einladen · Tarif wechseln | over their pages | |
+| 20–22 | Registrierung · Anmelden · Passwort zurücksetzen | `/registrieren` `/login` `/passwort` | |
 
-
-> The rows above are the primary screens. The modals, sheets and state
-> screens that make up the rest of the 41 are in the two tables below —
-> the Figma section name is the authority on the count.
-
-### Mobile (32)
+### Mobile — the primary screens
 
 Tab bar: Übersicht · Belege · **[Scan]** · Analyse · Mehr. Scan is a raised
 centre action, not a tab — it is the primary job.
 
 | # | Screen | Route |
 |---|---|---|
-| 1 | Übersicht | `/uebersicht` |
-| 2 | Belege | `/belege` |
-| 3 | Beleg erfassen (camera) | `/scan` |
-| 4 | Analyse | `/analyse` |
-| 5 | Mehr | menu sheet |
-| 6 | Beleg prüfen | `/belege/[id]` |
-| 7 | Fälligkeiten | `/faelligkeiten` |
-| 8 | Katalog | `/katalog` |
-| 9 | Lieferanten | `/lieferanten` |
-| 10 | DATEV-Export | `/export` |
-| 11 | Hochladen | upload sheet |
-| 12 | Einstellungen | `/einstellungen` |
-| 13–16 | Betrieb · Nutzer · Buchhaltung · Rechtliches | `/einstellungen/*` |
-| 17 | Onboarding | `/onboarding` |
-| 18–22 | Sheets: Artikel zuordnen · Neuer Artikel · Neuer Lieferant · Nutzer einladen · Tarif wechseln | bottom sheets |
-| 23 | Registrierung | `/registrieren` |
-| 24 | Anmelden | `/login` |
-| 25 | Passwort zurücksetzen | `/passwort` |
+| 1–5 | Übersicht · Belege · Beleg erfassen · Analyse · Mehr | `/uebersicht` `/belege` `/scan` `/analyse`, menu sheet |
+| 6–10 | Beleg prüfen · Fälligkeiten · Katalog · Lieferanten · DATEV-Export | as desktop |
+| 11–12 | Hochladen · Einstellungen | upload sheet, `/einstellungen` |
+| 13–17 | Betrieb · Nutzer · Buchhaltung · Rechtliches · Tarif | `/einstellungen/*` |
+| 18 | Onboarding | `/onboarding` |
+| 19–23 | Sheets: Artikel zuordnen · Neuer Artikel · Neuer Lieferant · Nutzer einladen · Tarif wechseln | bottom sheets |
+| 24–26 | Registrierung · Anmelden · Passwort zurücksetzen | as desktop |
 
+> The rows above are the primary screens. Everything else in the count is a
+> state, a document type or a dialog. The Figma section name is the authority
+> on the total.
 
-> As on desktop: the rows above are the primary screens; sheets and state
-> screens complete the 32 and are listed in the two tables below.
+### 3a. What the flow audit of 19.08.2026 changed
 
-### The seven steps that had no screen — now built
+Fifteen screens, one e-mail template and two product rules. The rules first,
+because they change what the screens say.
 
-Walking the seven user journeys end to end (Figma page `User Flow · MVP`)
-found seven steps a person really takes that nothing in the original 47
-screens covered. The inventory itself was complete and matched this document
-— these were steps that were never on the list, which is why a list review
-could not have found them. All seven are now built: **three screens, three
-states and one panel**, which took the count from 47 to 54.
+**A Lieferschein is not a Buchungsbeleg.** The DATEV preview was posting
+delivery notes to 3300. A supplier who delivers eight times and invoices once
+would then be booked nine times, and the duplicate rule cannot catch it —
+different number, different total. Reconciliation of delivery note against
+invoice is Phase 2, so the MVP settles it with a default and an exception:
+**Lieferscheine stay out of the Buchungsstapel** and feed price history and
+delivery control instead; a supplier whose delivery note *is* the invoice —
+the butcher who prints "Lieferschein/Rechnung" — carries the flag
+`bills_by_delivery_note` and gets posted. The flag is set on the supplier, not
+on the document, because it is a property of how that supplier trades.
 
-| Step | Why it mattered | Built as |
-|---|---|---|
-| **Storno of a booked document** | The heaviest one. §5 forbids hard deletes: soft-delete and Storno only. The rule had been written since day one with no interface, so a wrongly booked document could not be corrected at all. | `Modal · Beleg stornieren` — reason, and a plain list of what the Storno does to archive, price history, Pfand balance and an export already sent |
-| **Upload on desktop** | Mobile had an upload sheet; on desktop the "Beleg erfassen" button led nowhere. Receipts are photographed, but PDFs and XML arrive on a computer. | `Modal · Beleg hochladen` — drop zone, the tenant email address, the E-Rechnung path |
-| **Several documents on one photo** | Splitting is §2.1 item 2. The person has to see "three delivery notes recognised" and confirm, or the split happens silently — and each split document costs one against the quota. | `Modal · Mehrere Belege erkannt` |
-| **Processing / extraction failed** | The pipeline is async. The most frequent transition in the product — shoot, wait, result — was not designed, nor was the dead-letter case. | `Belege · Verarbeitung und Fehler — Mobile`: reading, failed with two ways out, and queued |
-| **Supplier price comparison** | Promised as a panel in `Katalog` (§2.1 item 14) and not drawn. | `Katalog · Lieferantenvergleich` — all prices converted to the base unit, cheapest marked |
-| **Rückfrage from the Kanzlei** | Introduced in §7a. The accountant asks; the owner has to see it in the review queue. | `Beleg prüfen · Rückfrage` — a banner above the document, with the question and who asked |
-| **Document quota exhausted** | 200 of 200 will happen to every paying customer. Billing is in the MVP; this state was not. | `Modal · Kontingent erschöpft` — top-up or upgrade, and the promise that intake and the GoBD archive keep running |
+**The app is scoped to one location at a time.** The tariff sells up to three
+Standorte and the data model has always had them, but nothing in the interface
+knew about them: a two-location owner could not tell whose delivery a document
+was. The switcher sits in the sidebar on desktop and in `Mehr` on the phone,
+and **every list, dashboard and export follows it**. A document gets its
+location on the review screen, defaulting to the location of whoever uploaded
+it. There is deliberately no per-list location filter — one global scope, or
+two screens start showing different totals for the same month.
 
-### States and document types — nineteen of them are drawn
+| Screen | What it settles |
+|---|---|
+| `Sheet · Position bearbeiten — Mobile` | The `Bearbeiten` button on the phone led nowhere. §7 requires quantity, price, VAT rate and the Pfand flag to be correctable per line; on a 375px table that needs a sheet. Mobile is the primary device, so this was the most expensive hole in the set |
+| `Neues Passwort setzen` — D + M | `Passwort zurücksetzen` was only the request form. The screen behind the e-mailed link did not exist |
+| `Einladung annehmen` — D + M | `Einstellungen · Nutzer` already shows "wartet auf Bestätigung", so invitations existed in the model with no screen to accept them. This blocked all four roles, and with them the Steuerberater — the cheapest distribution channel the product has (§7a) |
+| `Registrierung · E-Mail bestätigen` — D + M | Nothing was drawn between "Kostenlos testen" and the first login. It also carries the honest promise that documents may already be mailed in and will be archived |
+| `Belege · Noch keine Belege` — D + M | `Übersicht · Erster Tag` covered the dashboard and `Belege · Kein Treffer` the empty filter. The list with no data at all — the second screen every trial user opens — was not drawn |
+| `Beleg prüfen · Mögliche Dublette` — D + M | `possible_duplicate` is a warning, not a block: a Kassenbeleg under 250 € carries no number (§ 33 UStDV) and is recognised by supplier, day, time and total. That is grounds for suspicion, not for a lock, so the screen is amber and booking stays possible |
+| `Katalog · Noch keine Artikel — Mobile`, `Lieferanten · Noch keine Lieferanten — Mobile` | Both empty states existed on desktop only, and the first day happens on the phone |
+| `Belege · Storniert — Mobile` | A reversed document never leaves the list, so the phone meets it too |
+| `Sheet · Testphase abgelaufen — Mobile` | The trial ends wherever the owner opens the app first. `Kontingent erschöpft` already had both platforms; this one did not |
+| `E-Mail · Wochenbericht` | Scope item 15 had no design at all. One column, 600px: what was read, which prices moved, what is due with the Skonto still reachable, what is waiting. Wording follows §2.1a — `noch erreichbar`, never `gespart` |
 
-Not optional, and not a polish pass at the end. A list screen that has only
-its full state is half a screen. The four families:
+One tile on `Analyse` was replaced rather than restyled. It read **ZEIT
+GESPART · 6 Std. · beim Steuerberater** — hours saved at the tax advisor, which
+nothing in the system can evidence and which §2.1a forbids stating as fact. It
+now reads **AUTOMATISCH GEBUCHT · 92 % · 136 von 148 · ohne Korrektur**, and
+that number has an exact definition the build must not soften: documents booked
+in the period with **zero field edits**, divided by documents booked. The audit
+log already records every edit, so it is derivable and auditable — it measures
+what the extraction got right instead of guessing what that was worth to
+somebody.
 
-- **empty** — first login with no documents at all, and the *different* empty
-  of "no results for this filter"
-- **loading** — skeletons, not spinners, for anything with a known shape
+The same screen lost the word *Ersparnis* twice more: the quarter tile is now
+**PREISINDEX IM QUARTAL** and the panel beside `Größte Anstiege` is now
+**Größte Rückgänge**. Both figures were already real — they come from price
+history, not from a promise — but naming them after the movement instead of
+after its supposed benefit keeps one vocabulary on the screen and removes the
+question of whose saving it was.
+
+**Decided, so nobody reopens it:** the auth screens (`Registrierung`,
+`Anmelden`, `Passwort zurücksetzen`, `Onboarding`, and the three added on
+19.08.) carry the marketing proof point *„−9 % durchschnittliche Ersparnis im
+Einkauf in 3 Monaten“*. It **stays** — it rests on pilot data, not on the
+product's own arithmetic, which is why it lives on the marketing panel and
+never inside the app. Two consequences follow. The number is a quantified
+advertising claim, so whoever owns marketing keeps the pilot figures that
+support it and refreshes the claim when they move. And it must not migrate
+inside the product: everything past the login states only what this tenant's
+own documents show.
+
+Two permissions also got the control they were missing: the Kanzlei view now
+offers the **CSV line-item export and the GoBD-Z3 archive** next to the EXTF
+batch, which §7a grants but no screen had, and the desktop export screen offers
+the CSV as well.
+
+### 3b. Desktop only, on purpose
+
+Not a gap — a decision, written down so nobody "fixes" it later. The
+Kanzlei-Ansicht and its Rückfrage form, the Storno dialog, and the two DATEV
+batch states (`Stapel veraltet`, `Stapel bereitgestellt`) exist on desktop
+only. All four are desk work: an accountant, a booking correction and a
+month-end handover are not done standing in a walk-in fridge.
+
+### 3c. Still open, and deliberately not invented in Figma
+
+- **`Analyse` with too little history** — a price trend needs two observations.
+  Judged a variant of the existing empty states rather than a screen
+
+### 3d. The four state families
+
+Not optional, and not a polish pass at the end. A list screen that has only its
+full state is half a screen.
+
+- **empty** — first login with no data at all, and the *different* empty of
+  "no results for this filter"
+- **loading** — skeletons, not spinners, for anything with a known shape;
+  the four shapes and the rules are in §3g
 - **error** — what failed and what the person can do about it
 - **partial** — extraction succeeded but confidence is low, or the document is
   blocked from booking
 
-An audit on 17.08.2026 found that only one of these was drawn, on one
-platform. Twelve were drawn; a second, adversarial audit found five more holes
-that mattered. A third audit found two MVP document types with no path at all.
-Nineteen are drawn now; the count went 54 → 66 → 71 → 73.
+Every list, every MVP document type and every dead end now has one, on both
+platforms, with the exceptions listed in §3b and §3c.
 
-| # | Screen | What it settles |
-|---|---|---|
-| 55 | `Beleg prüfen · Blockierende Prüfung — Desktop` | Booking refused while a blocking finding stands: `Beleg buchen` on the kit's `State=Disabled`, the reason beside it, the two failing lines grounded red. Warnings never block. Also carries the **Pfand column** and the per-line VAT rate, both of which the base screen was missing |
-| 56 | `Beleg prüfen · Dublette — Desktop` | The duplicate stated in money — "a second booking would be 133,90 € twice, and paid twice" — with two exits: discard, or record anyway with a mandatory reason |
-| 57 | `Übersicht · Erster Tag — Desktop` | The first screen every trial user meets. Not zeroed tiles: the three intake routes, and what the page will show once documents exist |
-| 58 | `Übersicht · Erster Tag — Mobile` | Same, one column, camera first |
-| 59 | `Belege · Verarbeitung und Fehler — Desktop` | The async pipeline on the desktop, which had none: reading with a progress bar, failed with two exits, queued |
-| 60 | `Belege · Kein Treffer — Desktop` | Filter-empty, which is a different screen from data-empty: the active filter restated in words, the unfiltered count offered as the way out |
-| 61 | `DATEV-Export · Stapel veraltet — Desktop` | The situation the Storno dialog itself creates. A batch already handed over is never edited — it is marked stale and regenerated, both versions kept |
-| 62 | `Kanzlei-Ansicht · Rückfrage stellen — Desktop` | The missing middle of the Rückfrage loop: how the Steuerberater actually asks, anchored to one document and one line |
-| 63 | `Beleg prüfen · Rückfrage — Mobile` | The other end: the owner answers on the phone. Above the validation panel, because a human question is not a validation finding |
-| 64 | `Beleg scannen · Kein Netz — Mobile` | Recognition is server-side, so offline capture queues locally and says so. The chip must not claim a document was recognised offline |
-| 65 | `Sheet · Mehrere Belege erkannt — Mobile` | Split confirmation on the device where multi-document photos are taken, with the quota cost stated before confirming |
-| 66 | `Sheet · Kontingent erschöpft — Mobile` | Quota exhaustion strikes mid-scan on the phone. Intake and the GoBD archive keep running; only reading pauses |
-| 67 | `Beleg von Hand erfassen — Mobile` | The exit `Von Hand erfassen` promises on the extraction-failed card, which previously led nowhere. Header and totals only; the photo stays attached and in the archive; a retry must not cost a second quota unit |
-| 68 | `Belege · Storniert — Desktop` | What a reversed document looks like afterwards — it never leaves the list or the archive, it loses its effect. Shows the original and the generated reversing entry side by side |
-| 69 | `Modal · Dublette trotzdem erfassen — Desktop` | The mandatory reason behind booking a known duplicate. Allowed — a supplier really can send the same invoice twice — but never silently |
-| 70 | `Fälligkeiten · Zahlung bestätigt — Desktop` | The only event allowed to write a savings record (§2.1a). Confirming the payment, never displaying the discount |
-| 71 | `DATEV-Export · Stapel bereitgestellt — Desktop` | The owner side of `ExportBatch`, which had no representation after the click. Batch history, and why a handed-over batch is never edited |
-| 72 | `Beleg prüfen · Gutschrift — Desktop` | The fourth document type in the enum, which existed only as a filter chip. Every amount is negative — lines, total, DATEV posting, Wareneinsatz and the supplier balance — and the credit note references the invoice it reduces without replacing it |
-| 73 | `Beleg prüfen · E-Rechnung — Desktop` | A structured invoice bypasses OCR entirely (§4), so there is no scan pane, no confidence badge and nothing to correct. Until now nothing on any screen showed that an XML-sourced document is different from a photographed one |
+### 3e. Copy conventions the frontend must not undo
 
-**Still open, and deliberately not invented in Figma:**
+A pass on 19.08.2026 rewrote roughly 400 strings to remove two habits that make
+an interface look machine-assembled, and both are easy to reintroduce in code.
 
-- **loading skeletons** — specified above, not drawn; shape follows each list
-- **role-scoped variants for Staff and Manager** — Staff uploads only, so six
-  of seven sidebar entries are either hidden or denied. Which one is a product
-  decision about the permission model, not a drawing, and it is on the open
-  list in §12
-- **`Trennung ändern`** — the merge/split editor behind that button. Annotated
-  as undesigned on both split screens; raise it before estimating
-- **the `Fälligkeiten` tab row** — `Fälligkeiten — Desktop` presents itself as
-  a tab of `Belege`, but `Belege` has no such row. Both `Belege` screens now
-  carry an annotation saying the row is owed; adding it is a navigation
-  decision
+- **No middle dot as a separator.** Two facts on one line are joined by a
+  comma, a preposition or an em dash; a path uses a slash. `24 Belege im Juni`,
+  not `24 Belege · Juni`. The only surviving `•` is the password mask, which is
+  a mask and not a separator.
+- **No glyph arrows, checks or maths signs in text runs.** Direction is carried
+  by the sign and the colour, so a trend reads `+12 %` / `−6 %` with no arrow,
+  and a link says where it goes instead of pointing at it. The validation panel
+  says `Summe der Zeilen`, not a sigma. Where an icon is genuinely needed it is
+  a drawn vector from the kit — a character in a text run inherits the text
+  colour and weight and stops being an icon at the first restyle.
+
+Both rules come from `AI_rules.md` §8; the file now complies, and the page
+notes carry them so they survive the handoff.
+
+### 3f. The permission model, and how it is shown
+
+Four roles, one tenant. `Rollen · Rechte-Matrix — Desktop` carries the full
+table and is the source of truth: **if code and that table disagree, the table
+is right, or it gets changed there first.** The short version:
+
+| | Owner | Manager | Staff | Steuerberater |
+|---|---|---|---|---|
+| Erfassen | ja | ja | ja | — |
+| Prüfen, buchen, stornieren | ja | ja | — | — |
+| Zahlen, Analyse, Katalog, Lieferanten | ja | ja | — | lesen |
+| DATEV, CSV, GoBD-Z3 | ja | ja | — | ja |
+| Nutzer einladen | ja | nur Staff | — | — |
+| Tarif, Abrechnung, Löschen | ja | — | — | — |
+
+Three mechanisms, and the difference between them is the part that is easy to
+get wrong:
+
+1. **Navigation hides.** A menu entry a role may never use is not rendered.
+   Six of seven sidebar items reading „kein Zugriff“ is a wall of refusals
+   shown to the person who does the most repetitive work in the building.
+2. **Routes deny.** A deep link to a hidden page lands on
+   `Staff · Kein Zugriff` — never a 404, never a blank screen. It names the
+   role, what the role is for, and who can change it. One screen serves every
+   denied route; the title carries the attempted route's own name.
+3. **Actions inside a permitted page stay visible and disabled**, with who may
+   perform them — see the two owner-only actions on
+   `Manager · Einstellungen`. Hiding a button on a page the role may
+   legitimately open makes the page look broken, and the person still needs to
+   know the function exists and whom to ask.
+
+**None of this is security.** The hidden entry is comfort; every route and
+every mutation re-checks the role on the server.
+
+Two consequences worth stating because they shaped the screens:
+
+- **Staff sees only what they uploaded, and no amounts at all.** The list is
+  scoped to that person so they can tell whether their photo went through, and
+  the money column is absent everywhere. The total is on the paper in their
+  hand; what the business spends is not their business, and hiding it costs
+  them nothing. Their statuses are upload-centric — *wird gelesen, wird
+  geprüft, erfasst, nicht gelesen* — never booking states, because Staff never
+  books.
+- **The Staff tab bar is a variant, not a second component.** Uploads, the
+  raised Scan action, Mehr. In Figma it is detached to make the variant
+  visible; in code it stays one component driven by the role. Staff's Standort
+  is assigned rather than switchable — the global location scope of §3a is
+  fixed for them.
+
+
+### 3g. Loading, and why it is four screens rather than one component
+
+Four shapes cover the product: **list** (`Belege · Laden — Desktop`, stands for
+Katalog and Lieferanten too), **dashboard** (`Übersicht · Laden — Desktop`,
+stands for Analyse), **detail** (`Beleg prüfen · Laden — Desktop`) and **mobile
+list** (`Belege · Laden — Mobile`). Each is a clone of its live screen with the
+data taken out, which is the point: same row height, same column widths, same
+padding, so **nothing shifts when the data lands.**
+
+What stays real and what becomes a block is the part that is easy to get wrong:
+
+- **Real:** sidebar, tab bar, topbar, page title, column headers, filter chips,
+  the search placeholder. Anything the client already knows before the request
+  returns — putting a skeleton over a control the person could already use is a
+  lie about what is loading.
+- **A block:** everything the server still owes. **Anything carrying a figure
+  counts as owed**, including a count in a header (`24 Belege im Juni`) and the
+  subtitle of a detail screen, because the document is not identified yet.
+- **Colour is data too.** Chart marks, the donut, status tints and confidence
+  badges go flat grey. A lime chip inside a skeleton claims a result that has
+  not arrived.
+- **No result glyph.** No ticks in the validation panel, no checked Pfand box.
+- **Actions that need the data are disabled** — `Beleg buchen` is disabled while
+  the document is still loading.
+
+Mechanics:
+
+| | |
+|---|---|
+| Block height | ≈ 0.72 × font size, radius 4 |
+| Block fill | one step below its ground — `#ebebeb` on a white card |
+| Block width | varies per column, so the result does not read as a grid; badges keep the pill radius |
+| Row count | whatever fills the viewport — the real count is one of the unknowns |
+| Below ~300 ms | show nothing; a skeleton that flashes is worse than a still screen |
+| Above ~10 s | switch to the failure state; a skeleton that shimmers forever is a spinner with extra steps |
+| Motion | one shimmer, off under `prefers-reduced-motion`, never a spinner on top |
+
+**A skeleton needs a known shape.** An action with an unknown duration — an
+export being generated, a batch being built — gets a progress bar or its own
+state screen instead. `Belege · Verarbeitung und Fehler` is that case and is
+deliberately not a skeleton.
+
+
+### 3h. `Trennung ändern`, and why the model is cuts rather than drag-and-drop
+
+`Modal · Trennung ändern — Desktop` and `Sheet · Trennung ändern — Mobile` are
+the editor the split-confirmation screens promise. **The model is a strip of
+captures with cuts between them**, which is also exactly what the backend
+needs: an ordered list of page indices plus the positions of the cuts.
+
+That choice does the work:
+
+- **Pages keep their order.** Nothing is dragged and nothing is reordered, so
+  the only two operations are *set a cut* and *remove a cut* — and every state
+  the person can reach is valid by construction. There is no way to build a
+  document out of pages 1 and 4.
+- **A document always keeps at least one capture**, which falls out of the same
+  model rather than needing a validation rule.
+- **The credit consequence is live and honest**: one cut more is one credit
+  more, one merge is one credit less, because a photo or PDF is charged per
+  document. A wrong split costs money *and* corrupts price history, which is
+  why this screen exists at all.
+
+**Out of scope, deliberately:** region cropping inside a single photo — two
+delivery notes lying side by side on one sheet. The split works per capture,
+because a photo batch is several captures. Cropping regions is a different
+interaction with a different model and belongs to Phase 2 if it ever earns its
+place.
+
+
+### 3i. The Belege tab row
+
+`Fälligkeiten` presented itself as a tab of `Belege` while `Belege` had no such
+row — the two screens disagreed about the navigation above the list. The row is
+now on all ten desktop screens that present themselves as Belege, including the
+four that are only a backdrop behind a modal:
+
+**Alle Belege / In Arbeit / Fälligkeiten.**
+
+Three decisions came with it:
+
+- **The middle tab was `Erfassen`, a verb between two nouns.** It is now
+  **In Arbeit**, and it is the door to `Belege · Verarbeitung und Fehler` —
+  the pipeline states were reachable only right after an upload and had no
+  navigation of their own.
+- **The active underline is ink, not lime.** The `Tab` component's Active
+  variant defaults to lime; a `#dcff90` hairline on white measures 1.12:1 and
+  is simply not there. The instances override it. **Fix the variant in the kit
+  before building** rather than repeating the override.
+- **The phone deliberately has no tab row.** `Fälligkeiten — Mobile` is a
+  pushed screen with a back header, and a second chip row above the existing
+  filters would fight them. Its door is an entry card at the top of
+  `Belege — Mobile` that carries the week's figure and the Skonto still
+  reachable. The pipeline states need no door there: on the phone those
+  documents sit in the list with their status on the row.
+
+
+### 3j. The unit conversion editor
+
+`Modal · Umrechnung ändern — Desktop` and `Sheet · Umrechnung ändern — Mobile`
+sit behind the `Ändern` link next to a conversion in `Artikel zuordnen`.
+
+**This is where the most expensive bug in the prototype lived** — a pack price
+compared against a per-base-unit history, reported as `+424 %`, green on every
+type check. So the screen is built around the **result**, not around the
+factor: *„8,40 € je Karton sind 1,68 € je Liter“* recomputes as the person
+types, and it is the line that lets them tell a right conversion from a wrong
+one. A factor alone tells nobody anything.
+
+- **The base unit is fixed** and comes from the catalog item; only the quantity
+  inside the delivery unit is editable here.
+- **Two shapes, switched by chips.** *Feste Menge* (`1 Karton = 5 l`) and
+  *Einzelne Gebinde* (`1 Kiste = 24 Flaschen à 0,33 l`, the case `CLAUDE.md`
+  §2.3 names) — the second takes count, size and unit and multiplies them.
+- **Stored per (supplier, raw string or article number)** — the same key as the
+  mapping itself, because the conversion is a property of how that supplier
+  packs that product.
+- **It applies from the next document on.** Already booked lines keep the value
+  they were booked with: silently rewriting price history is worse than a wrong
+  factor going forward, and the person can see which entries were affected.
+
 
 ---
 
@@ -380,11 +579,11 @@ error.
 Core entities, from `CLAUDE.md` §4:
 
 ```
-Tenant, Location, User
-Supplier
+Tenant, Location, User (home_location_id)
+Supplier (bills_by_delivery_note)
 CatalogItem (base_unit)
 SupplierProductMapping (supplier_id, raw_string, article_no, catalog_item_id, conversion_factor)
-Document (type, status, source, original_file_ref, gobd_lock, date)
+Document (type, status, source, original_file_ref, gobd_lock, date, time, location_id)
 DocumentLine (qty, unit, unit_price, total, vat_rate, is_pfand, confidence, catalog_item_id)
 PriceHistory (catalog_item_id, supplier_id, unit_price, date)
 ExportBatch (datev | csv)
@@ -432,17 +631,28 @@ human should look but may proceed.
 | `vat_mismatch` | blocking | VAT recomputed per rate group must match |
 | `vat_rate_missing` | blocking | a line whose rate could not be read from the document |
 | `duplicate` | blocking | same supplier + document number + gross already booked |
+| `possible_duplicate` | warning | a document with **no** number matching an existing one by supplier + day + time + gross. See below |
 | `no_lines` | blocking | nothing extracted |
 | `price_jump` | warning | unit price against last known price for the same (supplier, product), default threshold 5 % |
 | `low_confidence` | warning | below 0.85, routes to review |
 | `pfand_unconfirmed` | warning | a line that looks like a deposit but the model was unsure |
-| `missing_number` / `missing_date` / `future_date` | warning | header fields |
+| `missing_number` / `missing_date` / `future_date` | warning | header fields. `missing_number` is **suppressed** for a `Kassenbeleg` at or under `kleinbetrag_limit_cents` (default 250 €) |
 
 Two details worth defending in review:
 
 - **Duplicate detection fingerprints supplier + number + gross, not the file.**
   The duplicate that actually happens is the same invoice arriving twice as an
   XRechnung and as a forwarded PDF — different bytes, same meaning.
+- **A Kleinbetragsrechnung has no number, so it gets the other fingerprint.**
+  § 33 UStDV lets a receipt at or under 250 € omit the number, the recipient
+  and the separately stated tax — and every Metro run produces one. Demanding a
+  number there would block a legally complete document, so the rule is
+  suppressed below the limit and identity falls back to supplier + day + time +
+  gross. That combination is strong enough to warn and too weak to block: two
+  purchases in the same minute for the same amount are unlikely, not
+  impossible. Hence `possible_duplicate` is a warning with its own screen,
+  where booking stays available — see §3a. The document's time of issue is
+  carried for this rule and for nothing else.
 - **Price-change detection skips when there is no history.** The prototype had
   a bug here that reported "+424 %" because it compared a pack price
   (42,90 € per 5 kg) against a per-base-unit history (8,18 €/kg). Always
@@ -472,7 +682,13 @@ What it must do:
 - VAT rate per line as a select, defaulting to what the document said and
   never to a category guess.
 - "Beleg buchen" disabled while a blocking finding stands, with the reason
-  visible next to the button.
+  visible next to the button. A *warning* never disables it.
+- **On the phone, correcting a line is a sheet, not an inline table.** 375px
+  cannot hold quantity, unit, price, VAT select and the Pfand toggle in a row.
+  `Sheet · Position bearbeiten — Mobile` is that surface, and it shows the
+  recomputed line total before it is accepted.
+- **The document's location is set here**, defaulting to the uploader's home
+  location (§3a). It is the only screen that assigns one.
 - **Every correction teaches the mapping.** That is the learning core: the
   second invoice from the same supplier should need no corrections at all.
 
@@ -497,6 +713,11 @@ stops: they need the Buchungsstapel out, not the dashboard in. So the role is
 | Download the CSV/Excel line-item export | See or change plan, billing, users |
 | Run the GoBD Z3 export | Delete anything |
 
+**Every row on the left needs a control, and two of them were missing.** The
+Kanzlei-Ansicht offered the EXTF batch and nothing else, so the CSV line-item
+export and the GoBD-Z3 archive were rights on paper. Both now sit on that
+screen. A permission with no button is not a permission.
+
 **Why booking stays with the restaurant.** It is tempting to let the Kanzlei
 fix a wrong VAT rate and book — that is how the paper process works today. But
 the review screen is where the mapping learns, and the person who knows that
@@ -504,6 +725,13 @@ the review screen is where the mapping learns, and the person who knows that
 Kanzlei. Move booking to the accountant and the catalog stops learning, price
 history stops filling, and every alert the product sells goes quiet. The audit
 trail is also cleaner when booking has exactly one owner.
+
+**The role needs a way in.** An invitation is sent from
+`Einstellungen · Nutzer`; the recipient lands on `Einladung annehmen`, which
+states who invited them, to which business, in which role, and what that role
+may and may not do — before they choose a password. For the Steuerberater this
+screen *is* the product's first impression on the distribution channel, so it
+says the "may not" half out loud rather than hiding it.
 
 What the accountant needs instead of edit rights is a way to send a question
 back — the classic Rückfrage. In the MVP that is one field: a note on a
