@@ -201,3 +201,73 @@ def test_future_date_warns_only() -> None:
     findings = validate(doc, ValidationContext(today=TODAY))
     assert Code.FUTURE_DATE in {f.code for f in findings}
     assert may_book(findings)
+
+
+# --- Kassenbeleg: a till receipt is not obliged to carry a number ---------
+
+
+def make_receipt(**overrides: object) -> ExtractedDocument:
+    """A bakery receipt: no number, no supplier VAT id, well under 250 €."""
+    line = make_line(description="Brötchen", quantity=Decimal(60),
+                     unit_price=Decimal("0.35"), line_total_cents=2100)
+    base: dict[str, object] = {
+        "doc_type": DocumentType.KASSENBELEG,
+        "doc_number": None,
+        "doc_date": dt.date(2026, 8, 12),
+        "doc_time": dt.time(7, 42),
+        "supplier": Party(name="Bäckerei Falk"),
+        "total_net_cents": 2100,
+        "total_vat_cents": 147,
+        "total_gross_cents": 2247,
+    }
+    return make_doc((line,), **(base | overrides))
+
+
+def test_kleinbetragsrechnung_needs_no_document_number() -> None:
+    findings = validate(make_receipt(), ValidationContext(today=TODAY))
+    assert Code.MISSING_NUMBER not in {f.code for f in findings}
+    assert may_book(findings)
+
+
+def test_receipt_above_the_threshold_needs_a_number_again() -> None:
+    # § 33 UStDV stops applying above 250 € gross, so the full field set is
+    # mandatory and the missing number blocks as it would on an invoice.
+    big = make_receipt(total_net_cents=30000, total_vat_cents=2100,
+                       total_gross_cents=32100)
+    findings = validate(big, ValidationContext(today=TODAY))
+    assert Code.MISSING_NUMBER in {f.code for f in findings}
+    assert not may_book(findings)
+
+
+def test_invoice_without_a_number_still_blocks() -> None:
+    findings = validate(make_doc(doc_number=None), ValidationContext(today=TODAY))
+    assert Code.MISSING_NUMBER in {f.code for f in findings}
+
+
+def test_receipt_is_identified_by_supplier_day_time_and_total() -> None:
+    receipt = make_receipt()
+    assert fingerprint(receipt).startswith("stamp|")
+    # A second purchase a minute later is a different document.
+    later = make_receipt(doc_time=dt.time(7, 43))
+    assert fingerprint(receipt) != fingerprint(later)
+    # A numbered document never collides with a numberless one.
+    assert fingerprint(make_doc()).startswith("num|")
+
+
+def test_repeated_receipt_warns_but_does_not_block() -> None:
+    receipt = make_receipt()
+    ctx = ValidationContext(today=TODAY, seen_fingerprints=frozenset({fingerprint(receipt)}))
+    findings = validate(receipt, ctx)
+    codes = {f.code for f in findings}
+    assert Code.POSSIBLE_DUPLICATE in codes
+    assert Code.DUPLICATE not in codes
+    # Two identical purchases are unlikely, not impossible — the owner decides.
+    assert may_book(findings)
+
+
+def test_repeated_invoice_still_blocks() -> None:
+    doc = make_doc()
+    ctx = ValidationContext(today=TODAY, seen_fingerprints=frozenset({fingerprint(doc)}))
+    findings = validate(doc, ctx)
+    assert Code.DUPLICATE in {f.code for f in findings}
+    assert not may_book(findings)

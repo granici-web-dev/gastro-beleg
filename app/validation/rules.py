@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import StrEnum
 
-from app.domain import ExtractedDocument, ExtractedLine, VatRate
+from app.domain import DocumentType, ExtractedDocument, ExtractedLine, VatRate
 from app.money import apply_vat, cents_from_decimal, format_cents
 
 
@@ -31,6 +31,7 @@ class Code(StrEnum):
     VAT_MISMATCH = "vat_mismatch"
     VAT_RATE_MISSING = "vat_rate_missing"
     DUPLICATE = "duplicate"
+    POSSIBLE_DUPLICATE = "possible_duplicate"
     PRICE_JUMP = "price_jump"
     LOW_CONFIDENCE = "low_confidence"
     PFAND_UNCONFIRMED = "pfand_unconfirmed"
@@ -69,6 +70,11 @@ class Thresholds:
     price_change_ratio: Decimal = Decimal("0.05")
     #: Below this, a field goes to human review instead of straight through.
     review_confidence: float = 0.85
+    #: § 33 UStDV: under this gross total a Kleinbetragsrechnung needs no
+    #: document number, no recipient and no separately stated tax. Above it the
+    #: full field set applies again. A setting, not a literal, because the
+    #: threshold has moved before (200 € until 2016) and will move again.
+    kleinbetrag_limit_cents: int = 25_000
 
 
 @dataclass(frozen=True, slots=True)
@@ -90,7 +96,18 @@ class ValidationContext:
 
 
 def fingerprint(document: ExtractedDocument) -> str:
-    """Supplier + document number + gross total, per the duplicate rule.
+    """What makes two documents the same document. Two forms, not one.
+
+    A numbered document is identified by supplier, number and gross total. A
+    document without a number cannot be, and inventing one for it is not an
+    option: the value would go into the GoBD archive and into DATEV as the
+    supplier's document number while the paper says no such thing. So the
+    second form identifies the document by what it does state — supplier, day,
+    time and total.
+
+    The two forms are prefixed and never compared against each other. A
+    numbered document and a numberless one are not the same document even when
+    everything else matches, because we cannot know that.
 
     Deliberately not a hash of the file: the same invoice arrives twice as a
     photo and as an XML, with different bytes and the same meaning. That is the
@@ -99,7 +116,34 @@ def fingerprint(document: ExtractedDocument) -> str:
     """
     supplier = document.supplier.vat_id or document.supplier.name.casefold()
     total = document.total_gross_cents
-    return f"{supplier}|{document.doc_number or ''}|{total if total is not None else ''}"
+    total_part = total if total is not None else ""
+    if document.doc_number:
+        return f"num|{supplier}|{document.doc_number}|{total_part}"
+    day = document.doc_date.isoformat() if document.doc_date else ""
+    clock = document.doc_time.isoformat(timespec="minutes") if document.doc_time else ""
+    return f"stamp|{supplier}|{day}|{clock}|{total_part}"
+
+
+def _number_required(document: ExtractedDocument, ctx: ValidationContext) -> bool:
+    """Whether this document is legally obliged to carry a number.
+
+    Only a Kassenbeleg may go without one, and only while it stays a
+    Kleinbetragsrechnung: § 33 UStDV drops the number, the recipient and the
+    separately stated tax below the threshold. Above it the full field set
+    applies again and a missing number blocks exactly as it does on an invoice.
+
+    Blocking every till receipt for a field the supplier is not obliged to
+    print would refuse documents the Finanzamt accepts — a Metro run produces
+    them by the handful.
+    """
+    if document.doc_type is not DocumentType.KASSENBELEG:
+        return True
+    total = document.total_gross_cents
+    if total is None:
+        # Nothing to measure against the threshold, so the exemption cannot be
+        # established. The stricter reading is the safe one.
+        return True
+    return abs(total) > ctx.thresholds.kleinbetrag_limit_cents
 
 
 def validate(
@@ -124,7 +168,7 @@ def _check_header(document: ExtractedDocument, ctx: ValidationContext) -> Iterab
             Severity.BLOCKING,
             "Das Dokument enthält keine Positionen.",
         )
-    if not document.doc_number:
+    if not document.doc_number and _number_required(document, ctx):
         yield Finding(
             Code.MISSING_NUMBER,
             Severity.BLOCKING,
@@ -295,9 +339,20 @@ def _expected_vat_cents(document: ExtractedDocument) -> int | None:
 
 
 def _check_duplicate(document: ExtractedDocument, ctx: ValidationContext) -> Iterable[Finding]:
-    if not document.doc_number:
+    """A repeat is proof when there is a number and a likelihood when there is not.
+
+    Matching numbers are evidence: a supplier does not issue two different
+    documents under one number, so booking would double the money and the rule
+    refuses it. Matching supplier, day, time and total is strong but not proof
+    — two purchases at the same bakery on the same day for the same cent amount
+    are unlikely, not impossible. Refusing on a likelihood would make the
+    product wrong about something the owner can check by looking in their
+    pocket, so that case warns and leaves the decision with them.
+    """
+    if fingerprint(document) not in ctx.seen_fingerprints:
         return
-    if fingerprint(document) in ctx.seen_fingerprints:
+
+    if document.doc_number:
         yield Finding(
             Code.DUPLICATE,
             Severity.BLOCKING,
@@ -306,6 +361,18 @@ def _check_duplicate(document: ExtractedDocument, ctx: ValidationContext) -> Ite
                 "wurde bereits erfasst."
             ),
         )
+        return
+
+    when = f"{document.doc_date:%d.%m.%Y}" if document.doc_date else "unbekanntem Datum"
+    clock = f" um {document.doc_time:%H:%M}" if document.doc_time else ""
+    yield Finding(
+        Code.POSSIBLE_DUPLICATE,
+        Severity.WARNING,
+        (
+            f"Sieht aus wie ein bereits erfasster Beleg von {document.supplier.name} "
+            f"vom {when}{clock} über denselben Betrag."
+        ),
+    )
 
 
 def blocking(findings: Iterable[Finding]) -> list[Finding]:

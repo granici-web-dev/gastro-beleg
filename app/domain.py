@@ -164,6 +164,13 @@ class ExtractedDocument(BaseModel):
     doc_type: DocumentType
     doc_number: str | None
     doc_date: dt.date | None
+    #: Time of issue, when the document prints one. Almost every German till
+    #: receipt does, and it is the only thing that separates two purchases made
+    #: at the same shop on the same day for the same amount. A Kassenbeleg
+    #: without a number is identified by supplier, day, time and total, so this
+    #: field is what keeps that identity from collapsing. Invoices rarely carry
+    #: it and do not need it — they have a number.
+    doc_time: dt.time | None = None
     currency: str
     supplier: Party
     buyer: Party | None = None
