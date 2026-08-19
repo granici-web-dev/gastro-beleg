@@ -590,7 +590,24 @@ ExportBatch (datev | csv)
 AuditLog
 SavingsEvent (§2.2)
 OnboardingProfile (§2.2)
+CreditAllowance (tenant_id, period, granted, used, rolled_in)
+CreditTopUp (tenant_id, purchased_at, credits, remaining)
+CreditCharge (document_id, source, line_count, credits, charged_at, note)
 ```
+
+**Two credit balances, not one.** The monthly allowance rolls one period
+forward and is capped at a single allowance, so it cannot be stockpiled;
+purchased top-ups never expire, not even across a tier change (§2.5). They are
+consumed allowance-first, and mixing them into one number makes the cap
+unenforceable and the top-up promise unkeepable.
+
+**Every charge is a row, and the rows are append-only.** `CreditCharge` records
+what was billed and why — the source it arrived by and the line count that
+decided the multiplier — because „warum drei Credits?“ is a question the
+product has to be able to answer. A correction is a compensating row, never an
+edit, the same discipline the archive uses. A retry after a failed read and a
+manual entry are charges of zero rather than absent rows: absence cannot be
+told apart from a bug.
 
 ### Constraints that are not negotiable
 
