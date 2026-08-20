@@ -204,6 +204,11 @@ Design constraint: product taxonomy must support future cross-tenant anonymized 
 
 ## 6. Conventions for Claude Code
 
+**Read `FLOWS.md` before implementing anything with a screen or a state.** It carries the
+document lifecycle, where credits are charged, the eleven end-to-end scenarios, the navigation
+contract and the defaults that are wrong in this codebase. `MVP.md` says what ships; `FLOWS.md`
+says what happens between screens.
+
 - Backend: Python type hints everywhere, mypy strict; no untyped domain logic. Pydantic v2 models
   for every extracted structure. Frontend: TypeScript strict, no `any` in domain logic.
 - Money: integer cents everywhere, never floats. VAT rounded per line, `Decimal` with `ROUND_HALF_UP`

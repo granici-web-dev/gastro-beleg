@@ -9,6 +9,7 @@ Companion documents:
 | Document | What it is for |
 |---|---|
 | `CLAUDE.md` | Product definition, German domain rules, conventions. **Authoritative** — this file never contradicts it, it only sequences it. |
+| `FLOWS.md` | **The behavioural contract** — document lifecycle, credit charging, the eleven scenarios, navigation, loading. This file sequences the scope; that one sequences the user. |
 | `README.md` | Honest state of the repository, including what is unproven. |
 | `.research/06-Implement/roadmap.md` | Phase 2 and 3, with the reasoning behind the order. Russian. |
 | `web/` | The clickable prototype. Correct **behaviour and data shapes**, superseded styling — see below. |
